@@ -1,0 +1,100 @@
+#{extends 'main.html'/}
+%{
+	dic_tsbs=models.utils.SecurityConstant.dic_tsbs;
+	dic_jjcd=models.utils.SecurityConstant.dic_jjcd;
+	dic_sqlb=models.utils.SecurityConstant.dic_sqlb;
+	dic_orderid=models.utils.SecurityConstant.dic_orderId;
+}%
+<div class="up_sction">
+	<h3 class="h3 clear">
+		<em>查询</em>
+		<span class="bannerBtn_list">
+			#{f.button '查询',href:'javascript:query();',id:'btnQuery',class:'query autonomy_btn btn1'/}
+		</span>
+	</h3>
+	<div class="formTab_bj listPage_bj">
+	#{form @order.ReportOrders.statistics(),method:'GET',id:'form'}
+		<table class="form_tab">
+			<tbody>
+				<tr>
+					<td class="text_r td_8">日期：</td>
+					<td class="td_45">#{q.combin_datePicker name:'beginAt',endName:'endAt' /}</td>
+					<td>
+					</td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+	#{/form}
+	</div>
+</div>
+<div class="down_sction">
+	<h3 class="h3">统计信息</h3>
+	<div class="showTab_bj">
+		<table class="show_tab">
+			<thead>
+				<tr class="tr_bg">
+					<th>单位名称</th>
+					<th>绿灯</th>
+					<th>黄灯</th>
+					<th>红灯</th>
+				</tr>
+			</thead>
+			<tbody>
+			<input name='begin' value='${beginAt}' id='beginAt' type="hidden"  >
+			<input value='${endAt}' id='endAt' type="hidden">
+			#{list items:result,as:"vo"}
+					<td>${vo?.twoname}</td>
+					<td><a href='javascript:;' class ='green'>${vo?.green}</a></td>
+					<td><a href='javascript:;' class ='yellow'>${vo?.yellow}</a></td>
+					<td><a href='javascript:;' class ='red'>${vo?.red}</a></td>
+				</tr>
+				#{/list}
+				#{else}<tr><td colspan="4">暂时没有数据！</td></tr>#{/else}
+			</tbody>
+		</table>
+		<div class="mrb">#{if rs?.pager}#{f.pagination pager:rs?.pager,url:'/statistics' /}#{/if}</div>
+	</div>
+</div>
+<script>
+$(function(){
+	$("td .green").click(function(){
+		var twoname=$(this).parent().prev().text();
+		if(twoname==''){
+			twoname='系统管理员'
+		}
+		var bs = 'green';
+		var beginAt = $('#beginAt').val();
+		var endAt = $('#endAt').val();
+		location.href ='/statistic/'+beginAt+'/'+endAt+'/'+twoname+'/'+bs;
+	})
+	$("td .yellow").click(function(){
+		var twoname=$(this).parent().prev().prev().text();
+		if(twoname==''){
+			twoname='系统管理员'
+		}
+		var bs = 'yellow';
+		var beginAt = $('#beginAt').val();
+		var endAt = $('#endAt').val();
+		location.href ='/statistic/'+beginAt+'/'+endAt+'/'+twoname+'/'+bs;
+			
+	})
+	$("td .red").click(function(){
+		var twoname=$(this).parent().prev().prev().prev().text();
+		if(twoname==''){
+			twoname='系统管理员'
+		}
+		var bs = 'red';
+		var beginAt = $('#beginAt').val();
+		var endAt = $('#endAt').val();
+		location.href ='/statistic/'+beginAt+'/'+endAt+'/'+twoname+'/'+bs;
+			
+	})
+})
+function query(){
+	$('#btnQuery').disabled = true;
+	$('#form').submit();
+}
+</script>

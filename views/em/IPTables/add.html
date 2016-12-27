@@ -1,0 +1,30 @@
+#{extends 'main.html'/}
+<div class="up_sction">
+	<h3 class="h3">新增页面</h3>
+	<div class="formTab_bj">
+	<form action="@{em.IPTables.create()}" method="post" id="form" name="form">
+		<table class="form_tab">
+			<tbody>
+				<tr>
+					<td class="text_r td_8">IP：</td>
+					<td class="td_40">#{f.text_field 'iptables.ip',required:'true',value:iptables?.ip/}</td>
+					<td class="text_r td_8">名称：</td>
+					<td class="td_40">#{f.text_field 'iptables.name',value:iptables?.name/}</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+	<div>
+		<span class="autonomy three_autonomy">
+			#{f.button '保存',href:'javascript:submitForm();',class:'save' /}
+			#{f.button '取消',href:@em.IPTables.index(),class:'cancel'/}
+		</span>
+	</div>
+	<div style="padding-top:1px;"></div>
+	</div>
+</div>
+<script type="text/javascript">
+	function submitForm(){
+		$('#form').submit();
+	}
+</script>

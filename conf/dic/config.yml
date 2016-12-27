@@ -1,0 +1,26 @@
+store: redis
+dictionaries:
+ - name: roleList
+   type: sql
+   data: "select 'roleList' as T,id as K, name as V from t_role where if_use=1;"
+ - name: platformRoleList
+   type: sql
+   data: "select 'platformRoleList' as T,id as K, name as V from t_role where if_use=1 and type='platform';"
+ - name: userList
+   type: sql
+   data: "select 'userList' as T,id as K,name as V from t_user where if_use=1;"
+ - name: allUserList
+   type: sql
+   data: "select 'allUserList' as T,id as K,name as V from t_user;"
+ - name: twoUnitSql
+   type: sql
+   data: "select 'twoUnitSql' as T,name as K,name as V from t_user where if_use=1;"
+ - name: ipList
+   type: sql
+   data: "select 'ipList' as T, ip as K, name as V from t_ip_table where if_use=1;"
+ - name: platform
+   type: yaml
+   data: dic/data.yml
+ - name: smsTemplateList
+   type: sql
+   data: "select 'smsTemplateList' as T, id as K, name as V from T_SMS_TEMPLATE where if_use = 1 and status='succAudit';"

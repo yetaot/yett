@@ -1,0 +1,16 @@
+%{
+	(_arg)&&(_name = _arg)
+	if(! _name){
+		throw new play.exceptions.TagInternalException("datePicker标签name属性不能为空");
+	}
+
+	serializedAttrs  = play.templates.FastTags.serialize(_attrs,"name","endName","value","bid","eid","format","inputClass").raw();
+}%
+<span class="input_text td_45">
+<input type="text" class="${_inputClass?_inputClass:''}"  data-name="datePicker" name="${_name}"  id="${_bid?_bid:''}"  ${serializedAttrs} value="${_value?_value:params[_name]}"/><img src="/public/images/cander.png" class="cander"/>
+</span>
+至
+<span class="input_text td_45">
+<input type="text" class="${_inputClass?_inputClass:''}" data-name="datePicker" name="${_endName}"   id="${_eid?_eid:''}"  ${serializedAttrs} value="${_value?_value:params[_endName]}"/><img src="/public/images/cander.png" class="cander"/>
+</span>
+

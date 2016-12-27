@@ -1,0 +1,67 @@
+#{extends 'main.html'/}
+<style>
+span.input_textarea{
+	height: 120px;
+}
+</style>
+			<div class="up_sction">
+				<h3 class="h3">短信批次发送修改页面</h3>
+				<div class="formTab_bj">
+				#{form @sms.SmsBatchSendLogs.update(log?.id),method:'POST',id:'form',name:'form'}
+					<table class="form_tab">
+						<tbody>
+							<tr>
+                                <td class="text_r td_8">批次号：</td>
+								<td class="td_40">
+								${log?.batchNo}
+								</td>
+								<td class="text_r td_8">接收号码：</td>
+								<td class="td_40">
+									${log?.acceptor}
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">内容：</td>
+								<td class="td_40">
+									#{f.text_area 'content',value:log?.content,onKeyUp:'checkLen(this.value);' /}
+									<span id="countWord" style="color: red;"></span>
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_40">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					#{/form}
+					<div >
+						<span class="autonomy" style="width: 260px;">
+							#{f.button '提交',href:'javascript:submitForm();',class:'save' /}
+							#{f.button '取消',href:@sms.SmsBatchSendLogs.index(),class:'cancel'/}
+						</span>
+					</div>
+			</div>
+			</div>
+<script type="text/javascript">
+    function submitForm(){
+ 		$('#form').submit();
+	  } 
+    function  getStringLen(Str){
+		var   i,len,code;
+		if(Str==null || Str == ""){
+			return   0;	
+		}
+		len   =   Str.length;   
+		for   (i = 0;i < Str.length;i++){     
+			code = Str.charCodeAt(i);   
+			if   (code > 255) {
+				len ++;
+			}   
+		}   
+		return   len;   
+	}
+	//计算当前输入的个数，汉字算两个字符
+	function checkLen(value){
+		var len = getStringLen(value);
+		$("#countWord").text('已输入'+len+'个字符');
+	}
+</script>

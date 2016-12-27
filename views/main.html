@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" >
+	<meta http-equiv="X-UA-Compatible" content="IE=9;IE=8;IE=7;IE=EDGE" />
+	
+	<title>北京地铁举报投诉平台</title>
+	<link rel="stylesheet" href="/public/stylesheets/index.css"/>
+	<link rel="stylesheet" href="/public/stylesheets/jquery.datetimepicker.css"/>
+	<link href="/public/stylesheets/jquery-ui.min.css" media="screen" rel="stylesheet" type="text/css" />
+</head>
+<script src="/public/javascripts/jquery-1.8.2.min.js"></script>
+<script src="/public/javascripts/jquery.datetimepicker.js"></script>
+<script src="/public/javascripts/jquery-ui.min.js" type="text/javascript"></script> 
+<script src="/public/javascripts/layout.js"></script>
+	
+<body>
+<div class="alert_box" style="display:none;" id="alter_box">
+	<h3><span id="alter_title"></span><a href="javascript:closeTipBox();" class="close_btn"></a></h3>
+	<p id="alter_content"></p>
+</div>
+<div class="content">
+	#{doLayout /}
+</div>
+
+<script type="text/javascript">
+function closeTipBox(){
+	$('#alter_box').hide();
+}
+function showTipBox(title,content,options){
+	title = title || '提示';
+	content = content;
+	$('#alter_title').text(title);
+	$('#alter_content').text(content);
+	$('#alter_box').slideDown();
+}
+
+
+$(document).ready(function(){
+	
+	#{if flash.error||flash.success}
+		showTipBox('提示',"${flash.error?flash.error:flash.success}");
+		setTimeout(closeTipBox,3000);
+	#{/if}
+	
+	$('input[data-name="datePicker"]').datePicker();
+	$('strong[data-rcd="combin_btn"]').find('ul').hide();
+	$('strong[data-rcd="combin_btn"]').hover(function(){
+		$(this).find('ul').show();
+	},function(){
+		$(this).find('ul').hide();
+	});
+	
+	
+	$('.show_tab td a').hover(function(){
+		$(this).addClass("btn_hover");
+	},function(){
+		$(this).removeClass("btn_hover");
+	})
+	
+	$('div[data-name="more_btn_list"]').hover(function(){
+		$(this).css("position","relative").find('ul').show();
+	},function(){
+		$(this).css("position","static").find('ul').hide();
+	});
+});
+
+$.fn.extend({
+	datePicker:function(){
+		var _timePicker = false;
+		var _format = $(this).attr("data-format");
+		if(!_format){
+			_format='Y-m-d';
+		}else{
+			if(_format.indexOf("H")>-1){
+				_timePicker = true;
+			}
+		}	
+		var config={
+				lang:'ch',
+				format:_format,
+				timepicker:_timePicker,
+				scrollInput: false
+		}
+		return this.datetimepicker(config);
+	}
+});
+</script>
+</body>
+</html>

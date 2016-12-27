@@ -1,0 +1,26 @@
+%{
+ 	if(_method){
+		separator = _href.toString().indexOf('?')!=-1?"&":"?";
+ 		_href = _href.toString()+separator.toString()+"x-http-method-override="+_method;
+	}
+ 	hiddenForm="var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST';";
+ 	if(_app){
+ 		hiddenForm=hiddenForm+" f.setAttribute('data-app','"+_app+"');";
+ 	}
+ 	hiddenForm=hiddenForm+" f.action = this.href;f.submit();";
+	serializedAttrs  = play.templates.FastTags.serialize(_attrs,"href","method","actionCode","class","title").raw();
+	if(_actionCode){
+		actions=framework.utils.SecurityUtil.getUserActions();
+	}
+}%
+#{if !_actionCode||actions.indexOf(_actionCode)>-1}
+<a href="${_href?_href:'javascript:void(0);'}"  class="opration_btn ${_class?_class:''}" title="${_arg}"
+#{if _method && _method.toUpperCase()=='DELETE'}
+	onclick="if (confirm('您确定要删除吗？')){ ${hiddenForm} };return false;"
+#{/if}
+#{elseif _method && _method.toUpperCase()=='PUT'}
+	onclick="${hiddenForm}return false;"
+#{/elseif}	
+${serializedAttrs}></a>
+#{/if}
+

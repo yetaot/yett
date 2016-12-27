@@ -1,0 +1,40 @@
+%{
+	serializedAttrs  = play.templates.FastTags.serialize(_attrs,"href","bgClass","class","url","service","form","action", "zip").raw();
+
+}%
+<a href="javascript:void(0);"  name="_download_tag${_sign}"  data-url="${_url}" data-service="${_service}" data-form="${_form}" data-action="${_action}" data-zip="${_zip}" class="${_class?_class:'new_adds'}" ${serializedAttrs}><span class="cha_bg add_bg">${_arg}</span>
+</a>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('a[name="_download_tag${_sign}"]').click(function(){
+			var _data_url =$.trim($(this).attr("data-url"));
+			var _data_service=$.trim($(this).attr("data-service"));
+			var _href = $(this).attr("data-base");
+			var _data_form=$(this).attr("data-form");
+			var _data_action=$(this).attr("data-action");
+			var _data_zip = $(this).attr("data-zip");
+			var _form = $(document.forms[0]);
+			if(_data_form){
+				_form=$(_data_form);
+			}
+			var _dataArray = _form.serializeArray();
+			var dataConfig=new Object();
+			for(var i in _dataArray ){
+				var _obj = _dataArray[i];
+				dataConfig[_obj.name]=_obj.value;	
+			}
+			dataConfig["url"]=_data_url;
+			dataConfig["service"]=_data_service;
+			dataConfig["auth"]=_data_action;
+			dataConfig["zip"] = _data_zip;
+			
+			$.getJSON('@{enterDownQueue()}',dataConfig,function(data){
+				if(data){
+					alert("任务添加成功,请到下载列表中下载！");
+				}else{
+					alert("任务添加失败！");
+				}
+			});
+		});
+	});
+</script>

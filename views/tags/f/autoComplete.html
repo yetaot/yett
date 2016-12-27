@@ -1,0 +1,90 @@
+%{
+	(_arg) && (_name = _arg)
+	 if(! _name) {
+        throw new play.exceptions.TagInternalException("AutoComplete标签name属性不能为空");
+    }
+    if(! _id){
+    	throw new play.exceptions.TagInternalException("AutoComplete标签id属性不能为空");
+    }
+    if(! _url){
+    	throw new play.exceptions.TagInternalException("AutoComplete标签url属性不能为空");
+    }
+    if(_dicName){
+    	_url='/autoComplete/'+_dicName;
+    }
+    if(!_display){
+    	_display="agentName";
+    }
+	 serializedAttrs  = play.templates.FastTags.serialize(_attrs,"spanClass","required","val","name","value","id","url","dicName","label","display","disVal","app").raw();
+	 
+}%
+
+<span class="${_spanClass?_spanClass:'span_text2 td_80'}"><input type="text" class="text" name="${_display}" value="${params[_display]?params[_display]:_disVal}" id="${_id}" ${serializedAttrs}></input>
+<input type="hidden" name="${_name}" id="${_id+'_sub'}" value="${params[_name]?params[_name]:_value}"/>
+</span>
+#{f.required _required /}
+#{f.error _name/}
+ <link href="/public/stylesheets/jquery-ui-1.10.2.custom.min.css" media="screen" rel="stylesheet" type="text/css" />
+<style type="text/css">
+ #ui-active-menuitem {
+   	color: #FFFFFF;
+    background-color: #092467;
+    border: 0;
+    border-radius:0;
+}
+.style1{
+	background:#FFFFFF ;
+}
+.style2{
+	border: 0;
+	border-radius:0;
+	background:#EEEEEE ;
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+		var _url = '${_url}';
+		var _label ='${_label}'||'name';
+		var _val = '${_val}'||'value';
+		var _dtype = _url.indexOf('http')==0?'jsonp':'json';
+		var app = '${_app}';
+		var jq=$;
+		if(app){
+			jq = $F.ui.apps[app].jq;
+		}
+		var _config = {
+				source:function(request,response){
+					jq.ajax({
+						url: _url,
+						dataType: _dtype,
+						data:{
+							q:request.term
+						},
+						success: function(data){
+							response($.map(data,function(item){
+							  return {
+								label: item[_label],
+							  	value: item[_label],
+							  	val: item[_val]
+							  }
+						}))
+						}
+					});
+						
+				},
+				select: function(event,ui){
+					$('#${_id}_sub').val(ui.item?ui.item.val : '');
+				},
+				open: function(event,ui){
+					$('ul li a:odd').addClass('style1');
+					$('ul li a:even').addClass('style2');
+				}
+			}
+		$('#${_id}').autocomplete(_config).bind('change blur',function(){
+			if(!$.trim(this.value)){
+				$('#${_id}_sub').val('');
+			}
+		});	
+});
+	
+</script>

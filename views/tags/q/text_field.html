@@ -1,0 +1,9 @@
+%{
+	(_arg) && (_name = _arg)
+	 serializedAttrs  = play.templates.FastTags.serialize(_attrs, "required","name","value").raw();
+}%
+
+<span class="input_text"><input type="text" name="${_name}" value="${_value?_value:params[_name]}" ${serializedAttrs}></input>
+</span>
+
+             

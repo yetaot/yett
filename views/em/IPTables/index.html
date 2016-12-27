@@ -1,0 +1,78 @@
+#{extends 'main.html'/}
+<div class="up_sction">
+	<h3 class="h3 clear">
+		<em>IP查询</em>
+		<span class="bannerBtn_list">
+			#{f.button '查询',href:'javascript:query();' ,class:'query autonomy_btn'/}
+			#{f.button '新增',href:@em.IPTables.add(),class:'add'/}
+		</span>
+	</h3>
+	<div class="formTab_bj listPage_bj">
+	#{form @em.IPTables.index(),method:'GET',id:'form'}
+		<table class="form_tab">
+			<tbody>
+				<tr>
+					<td class="text_r td_8">IP：</td>
+					<td class="td_25">#{q.text_field 'query.ip' /}</td>
+					<td class="text_r td_8"></td>
+					<td class="td_25"></td>
+					<td class="text_r td_8"></td>
+					<td class="td_25"></td>
+				</tr>
+			</tbody>
+		</table>
+	#{/form}
+	</div>
+</div>
+<div class="down_sction">
+	<h3 class="h3">IP信息</h3>
+	<div class="showTab_bj">
+		<table class="show_tab">
+			<thead>
+				<tr class="tr_bg">
+					<!-- <th width="5%"><input type="checkbox" name="checkAll" id="checkAll" /></th> -->
+					<th>IP</th>
+					<th>名称</th>
+					<th>创建时间</th>
+					<th width="15%">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+			#{list items:rs.results,as:"vo"}
+				<tr class="${vo_parity=='odd'?'':'bg1'}">
+					<!-- <td><input type="checkbox" name="cb" value="${vo?.id}" /></td> -->
+					<td>${vo?.ip}</td>
+					<td>${vo?.name}</td>
+					<td>${vo?.createdAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+					<td>
+						#{f.link_to '查看',href:@em.IPTables.show(vo?.id),class:'query_btn'/}
+						#{f.link_to '修改',href:@em.IPTables.edit(vo?.id),class:'edit_btn'/}
+						#{f.link_to '删除', href:@em.IPTables.destory(vo?.id), method:'DELETE', class:'delet_btn'/}
+					</td>
+				</tr>
+				#{/list}
+				#{else}<tr><td colspan="6">暂时没有数据！</td></tr>#{/else}
+			</tbody>
+		</table>
+		<div class="mrb">#{if rs?.pager}#{f.pagination pager:rs?.pager,url:'/iptables' /}#{/if}</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#checkAll").click(function(){
+		var obj = $("input[name='cb']");
+		if(this.checked == true){
+			$.each(obj,function(i,n){
+				n.checked = true;
+			})
+		}else{
+			$.each(obj,function(i,n){
+				n.checked = false;
+			})
+		}
+	})
+});
+function query(){
+	$('#form').submit();
+}
+</script>

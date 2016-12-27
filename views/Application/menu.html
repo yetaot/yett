@@ -1,0 +1,16 @@
+<ul class="menu">
+#{list items:resources,as:'menu'}
+	<li>
+	<a href="javascript:;">${menu?.key?.name}</a>
+	<ul class="menu2" style="z-index:6;">
+			#{list items:menu?.value,as:'vo'}
+			<li>
+			<a data-url="${vo?.url?vo.url:'javascript:;'}" href="javascript:;" class="menu_${vo?.code}">${vo?.name}</a>	
+			</li>
+			#{/list}
+	
+	</ul>
+</li>	
+#{/list}
+</ul>
+	

@@ -1,0 +1,248 @@
+#{extends 'main.html'/}
+%{
+	_SMS_TEMPLATE_NAME=models.utils.SecurityConstant.DIC_SMS_TEMPLATE_NAME;
+}%
+<link rel="stylesheet" href="/public/stylesheets/zTreeStyle.css"/>
+<link rel="stylesheet" href="/public/stylesheets/ztree-demo.css"/>
+<script type="text/javascript" src="/public/javascripts/jquery.ztree.all-3.5.min.js"></script>
+<style>
+span.input_textarea{
+	height: 120px;
+}
+</style>
+<link rel="stylesheet" href="/public/stylesheets/jquery.tagsinput.css" />
+<script src="/public/javascripts/jquery.tagsinput.min.js" type="text/javascript"></script>
+			<div class="up_sction">
+				<h3 class="h3">短信发送页面</h3>
+				<div class="formTab_bj">
+				#{form @sms.SendSms.send(),method:'POST',id:'form',name:'form',enctype:"multipart/form-data"}
+					<input type="hidden"  name="ifSend" value="1"/>
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">模板名称：</td>
+								<td class="td_40">
+									#{f.select 'templateId',items:tempList,labelProperty:'name',valueProperty:'id',blank:'true',blankTitle:'请选择',value:params['templateId'],required:'true' /}
+								</td>
+                                <td class="text_r td_8"></td>
+								<td class="td_40">
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">号码来源：</td>
+								<td class="td_40">
+									<input type="radio" name="mobileSource" value="manual" checked="checked" />手动录入
+									<input type="radio" name="mobileSource" value="fileImport" />文件导入
+								</td>
+							   <td class="text_r td_8"></td>
+								<td class="td_40">
+								</td>
+							</tr>
+							<tr data-source="manual">
+								<td class="text_r td_8"></td>
+								<td class="td_40">
+								#{f.text_area "mobileNos",spanClass:'input_textarea input_70 textarea_100',id:'phoneTag',value:mobileNos,required:'true' /}
+								</td>
+							   <td class="text_r td_8"></td>
+								<td class="td_40">
+								</td>
+							</tr>
+							<tr data-source="fileImport" style="display: none;">
+								<td class="text_r td_8">号码文件：</td>
+								<td class="td_40 dataFileTd">
+								<span class="input_text input_70">
+							<input type="file" name="dataFile" onchange="isValidateFile();"/>
+							</span>
+							<span class="red_star">*</span>
+						#{field 'dataFile'}<span class="error">${field.error}</span>#{/field}
+					</td>
+					</tr>
+					<tr>
+								<td class="text_r td_8">内容：</td>
+								<td class="td_40">
+									#{f.text_area 'content',value:params['content'],onKeyUp:'checkLen(this.value);' /}
+									<span id="countWord" style="color: red;"></span>
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_40">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<input type="hidden" name="accIds" id="accIds" value="${params['accIds']}"/>
+					#{/form}
+					<div id="menuContent" class="menuContent" style="display:none; position: absolute;">
+						<ul id="accountTree" class="ztree" style="margin-top:0; width:319px; height: 300px;"></ul>
+					</div>
+					<input type="hidden" name="nodes" value="${dataObj}" />
+					<div >
+						<span class="autonomy" style="width: 260px;">
+							#{f.button '提交',href:'javascript:submitForm();',class:'save' /}
+							<!-- #{f.button '发送',href:'javascript:sendForm();',class:'save' /} -->
+							#{f.button '取消',href:@sms.SendSms.index(),class:'cancel'/}
+						</span>
+					</div>
+			</div>
+			</div>
+<script type="text/javascript">
+	$(function(){
+		var obj_ms = $("input[name='mobileSource']");
+		var manual_tr = $("tr[data-source='manual']");
+		var fileImport_tr = $("tr[data-source='fileImport']");
+		obj_ms.change(function(){
+			if(this.value == 'manual'){
+				manual_tr.show();
+				fileImport_tr.hide();
+			}else{
+				fileImport_tr.show();
+				manual_tr.hide();
+			}
+		});
+		$("select[name='templateId']").change(function(){
+			var tempId = $(this).val();
+			if(tempId != ''){
+				$.getJSON("/sendSms/getTempContent",{tempId:tempId},function(data){
+					$("textarea[name='content']").val('').val(data.content);
+					checkLen(data.content);
+				})
+			}else{
+				$("textarea[name='content']").val('');
+				checkLen('');
+			}
+		});
+		$('#phoneTag').tagsInput({
+			defaultText:'',
+			onAddTag:function(tag){
+				var reg =/^\d{5,12}$/;
+				if(!reg.test(tag)){
+					$(this).removeTag(tag);
+				}
+			},
+			onChange: function(tag){
+				var items = [];
+				$('#phoneTag_tagsinput .tag span').each(function(i, n){
+					items.push($.trim($(n).text()));
+				});
+				var _val = items.join(',');
+				$('textarea[name="mobileNos"]').val(_val);
+			}
+		});
+	})
+    function submitForm(){
+		$("input[name='ifSend']").val('').val(0);
+ 		$('#form').submit();
+	  } 
+	function sendForm(){
+		$("input[name='ifSend']").val('').val(1);
+ 		$('#form').submit();
+	}
+	function isValidateFile() {
+		var fileName=$.trim($("input[name='dataFile']").val());
+		var errorMsg=$(".dataFileTd .error");
+		var extend =""!=fileName?fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase():"";
+		if(""!=extend&&",xls,xlsx,txt,".indexOf(","+extend+",")>-1) {
+			errorMsg.text('');
+			return true;
+		}else if(""==extend) {
+			errorMsg.text("请选择要上传的号码文件");
+			return false;
+		}else {
+			errorMsg.text("目前仅支持excel和txt格式的数据文件");
+			return false;
+		}
+	}
+	//计算当前输入的个数，汉字算两个字符
+	function checkLen(value){
+		value = value==null?'':value;
+		var len = value.length;
+		$("#countWord").text('已输入'+len+'个字');
+	}
+	
+	function getTree(){
+		return $.fn.zTree.getZTreeObj("accountTree");
+	}
+
+	function updateTree(){
+		var accIds = $('#accIds').val();
+		ztree = getTree();
+		if(accIds){
+			var arr=accIds.split(",");
+			var node;
+			var v="";
+			for(var i=0;i<arr.length;i++){
+				node = ztree.getNodeByParam("id",arr[i]);
+				ztree.checkNode(node,true,true);
+				if(i==0){
+					v = node.name;
+				}else{
+					v = v+","+node.name;
+				}
+			}
+			$('#accountSel').val(v);
+		}
+	}
+
+
+
+	function onCheck(e, treeId, treeNode) {
+		var zTree =getTree(),
+		nodes = zTree.getCheckedNodes(true),
+		accIds="",
+		v="";
+		
+		for(var i=0;i<nodes.length;i++){
+			var ptype = nodes[i].ptype;
+			if(ptype=="volunteer"){
+				if(!v){
+					v = nodes[i].name;
+					accIds = nodes[i].id;
+				}else{
+					v = v+","+nodes[i].name;
+					accIds = accIds+","+nodes[i].id;
+				}	
+			}
+			
+		}
+		$('#accountSel').val(v);
+		$('#accIds').val(accIds);
+	}
+	function showMenu(){
+		var accountObj=$('#accountSel');
+		var accountOffset=accountObj.offset();
+		$('#menuContent').css({left:accountOffset.left+"px",top:accountOffset.top+accountObj.outerHeight()+"px"}).slideDown("fast");
+		$("body").bind("mousedown", onBodyDown);
+	}
+
+	function hideMenu() {
+		$("#menuContent").fadeOut("fast");
+		$("body").unbind("mousedown", onBodyDown);
+	}
+	function onBodyDown(event) {
+		if (!(event.target.id == "accountSel"  || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length>0)) {
+			hideMenu();
+		}
+	}	
+	$(document).ready(function(){
+		var setting = {
+			check: {
+				enable: true
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			view: {
+				showIcon: false
+			},
+			callback: {
+				onCheck : onCheck
+			}
+			
+		};
+		var zNodes = $('input[name="nodes"]').val();
+		zNodes=JSON.parse(zNodes);
+		$.fn.zTree.init($('#accountTree'),setting,zNodes);
+		updateTree();
+	});	
+</script>

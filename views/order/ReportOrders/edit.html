@@ -1,0 +1,587 @@
+#{extends 'main.html' /}
+%{
+	dic_tsbs=models.utils.SecurityConstant.dic_tsbs;
+	dic_jjcd=models.utils.SecurityConstant.dic_jjcd;
+	dic_jylbid=models.utils.SecurityConstant.dic_jylbid;
+	dic_tslbid=models.utils.SecurityConstant.dic_tslbid;
+	dic_zxlbid=models.utils.SecurityConstant.dic_zxlbid;
+	dic_bylbid=models.utils.SecurityConstant.dic_bylbid;
+	dic_jblbid=models.utils.SecurityConstant.dic_jblbid;
+	dic_hyid=models.utils.SecurityConstant.dic_hyid;
+	dic_twounit=models.utils.SecurityConstant.dic_twounit;
+	dic_sqlb=models.utils.SecurityConstant.dic_sqlb;
+	dic_admin=models.utils.SecurityConstant.admin;
+}%
+<style>
+table{
+margin-bottom: 10px;
+}
+</style>
+			<div class="up_sction">
+				<h3 class="h3">
+					<em>查看工单${report?.formId}信息</em>
+					<span class="bannerBtn_list">
+						#{f.button '返回',href:'javascript:window.history.go(-1);',class:'query'/}
+					</span>
+				</h3>
+				<div class="formTab_bj">
+				#{form @order.ReportOrders.update(report?.id),method:'PUT',id:'form'}
+					#{f.hidden_field 'page',value:page /}
+					#{f.hidden_field 'query.reOption',value:query?.reOption/}
+					#{f.hidden_field 'query.reValue',value:query?.reValue/}
+					#{f.hidden_field 'query.formId',value:query?.formId /}
+					#{f.hidden_field 'query.username',value:query?.username /}
+					#{f.hidden_field 'query.linkphone',value:query?.linkphone /}
+					#{f.hidden_field 'query.sqlb',value:query?.sqlb/}
+					#{f.hidden_field 'query.statusId',value:query?.statusId/}
+					#{f.hidden_field 'query.beginAt',value:query?.beginAt /}
+					#{f.hidden_field 'query.endAt',value:query?.endAt /}
+					#{f.hidden_field 'query.twoUnit',value:query?.twoUnit /}
+					#{f.hidden_field 'query.bs',value:query?.bs/}
+					<table class="form_tab">
+						<tbody>
+							<tr bgcolor="#98F5FF">
+								<td  colspan=6>来电人基本资料</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">来电号码:</td>
+								<td class="td_25">${report?.callid}</td>
+								<td class="text_r td_8">来电人:</td>
+								<td class="td_25">${report?.username}</td>
+								<td class="text_r td_8">来电时间:</td>
+								<td class="td_25">${report?.createtime}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">联系电话:</td>
+								<td class="td_25">${report?.linkphone}</td>
+								<td class="text_r td_8">联系人:</td>
+								<td class="td_25">${report?.linkman}</td>
+								<td class="text_r td_8">保密:</td>
+								<td class="td_25">${report?.issecrecy==1?'保密':'不保密'}</td>
+							</tr>
+							#{if report?.sqlb=='24'}
+							<tr bgcolor="#98F5FF">
+								<td colspan=6>
+									投诉内容
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">投诉标识:</td>
+								<td class="td_25">#{f.dicValue dic_tsbs,key:report?.tsbs /}</td>
+								<td class="text_r td_8">投诉行业:</td>
+								<td class="td_25">#{f.dicValue dic_sqlb,key:report?.sqlb /}</td>
+								<td class="text_r td_8">投诉类别:</td>
+								<td class="td_25">#{f.dicValue dic_tslbid,key:report?.tslbid /}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">紧急程度:</td>
+								<td class="td_25" >#{f.dicValue dic_jjcd,key:report?.jjcd /}</td>
+								<td class="text_r td_8">线路号:</td>
+								<td class="td_25">${report?.attr1}</td>
+								<td class="text_r td_8">车辆编号:</td>
+								<td class="td_25">${report?.attr2}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">行驶方向:</td>
+								<td class="td_25">${report?.attr3} 至   ${report?.toWhere}</td>
+								<td class="text_r td_8">一卡通卡号:</td>
+								<td class="td_25">${report?.attr6}</td>
+								<td class="text_r td_9"></td>
+								<td class="td_25"></td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">上车站:</td>
+								<td class="td_25">${report?.scz}</td>
+								<td class="text_r td_8">下车站:</td>
+								<td class="td_25">${report?.xcz}</td>
+								<td class="text_r td_9"></td>
+								<td class="td_25" ></td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">发生时间:</td>
+								<td class="td_25" >${report?.tssj}</td>
+								<td class="text_r td_9">派单时间:</td>
+								<td class="td_25" >${report?.sendDate}</td>
+								<td class="text_r td_9">截止日期:</td>
+								<td class="td_25" >${report?.limitDate}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">限办时间:</td>
+								<td class="td_25" >${report?.limitTime} 个工作日</td>
+								<td class="text_r td_9">办理意见:</td>
+								<td class="td_25" >${report?.fzdealMessage==''?report?.dealMessage:report?.fzdealMessage}</td>
+								<td class="text_r td_9"></td>
+								<td class="td_25" ></td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">投诉内容:</td>
+								<td class="td_25" colspan=5>
+								#{f.text_area 'tssx',value:report?.tssx/}
+								</td>
+							</tr>
+							#{/if}
+							#{if report?.sqlb=='25'}
+							<tr bgcolor="#98F5FF">
+								<td colspan=6>
+									举报内容
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">举报行业:</td>
+								<td class="td_25">#{f.dicValue dic_sqlb,key:report?.sqlb /}</td>
+								<td class="text_r td_8">举报类别:</td>
+								<td class="td_25">#{f.dicValue dic_jblbid,key:report?.jblbid /}</td>
+								<td class="text_r td_9">行驶方向:</td>
+								<td class="td_25" colspan=3>${report?.attr3} 至  ${report?.toWhere}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">紧急程度:</td>
+								<td class="td_25" >${report?.jjcd}</td>
+								<td class="text_r td_8">线路号:</td>
+								<td class="td_25">${report?.attr1}</td>
+								<td class="text_r td_8">车辆编号:</td>
+								<td class="td_25">${report?.attr2}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">发生时间:</td>
+								<td class="td_25" >${report?.cxsj}</td>
+								<td class="text_r td_9">派单时间:</td>
+								<td class="td_25" >${report?.sendDate}</td>
+								<td class="text_r td_9">截止日期:</td>
+								<td class="td_25" >${report?.limitDate}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">限办时间:</td>
+								<td class="td_25" >${report?.limitTime}</td>
+								<td class="text_r td_9">办理意见:</td>
+								<td class="td_25" >${report?.fzdealMessage==''?report?.dealMessage:report?.fzdealMessage}</td>
+								<td class="text_r td_9"></td>
+								<td class="td_25" ></td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">举报内容:</td>
+								<td class="td_25" colspan=5>
+								#{f.text_area 'wfqk',value:report?.wfqk/}
+								</td>
+							</tr>
+							#{/if}
+							#{if report?.sqlb=='26'}
+							<tr bgcolor="#98F5FF">
+								<td colspan=6>
+									建议内容
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">建议类别:</td>
+								<td class="td_25">#{f.dicValue dic_jylbid,key:report?.jylbid /}</td>
+								<td class="text_r td_8">所属区域:</td>
+								<td class="td_25">${report?.ssqy }</td>
+								<td class="text_r td_9">派单时间:</td>
+								<td class="td_25" >${report?.sendDate}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">紧急程度:</td>
+								<td class="td_25" >#{f.dicValue dic_jjcd,key:report?.jjcd /}</td>
+								<td class="text_r td_8">线路号:</td>
+								<td class="td_25">${report?.attr1}</td>
+								<td class="text_r td_9">截止日期:</td>
+								<td class="td_25" >${report?.limitDate}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">限办时间:</td>
+								<td class="td_25" >${report?.limitTime}</td>
+								<td class="text_r td_9">办理意见:</td>
+								<td class="td_25" >${report?.fzdealMessage==''?report?.dealMessage:report?.fzdealMessage}</td>
+								<td class="text_r td_9"></td>
+								<td class="td_25" ></td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">建议内容:</td>
+								<td class="td_25" colspan=5>
+								#{f.text_area 'content',value:report?.content/}
+								</td>
+							</tr>
+							#{/if}
+							#{if report?.sqlb=='27'}
+							<tr bgcolor="#98F5FF">
+								<td colspan=6>
+									表扬内容
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">表扬行业:</td>
+								<td class="td_25">#{f.dicValue dic_hyid,key:report?.hyid /}</td>
+								<td class="text_r td_8">表扬类别:</td>
+								<td class="td_25">#{f.dicValue dic_bylbid,key:report?.bylbid /}</td>
+								<td class="text_r td_8">员工编号:</td>
+								<td class="td_25">${report?.ygbh}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">线路号:</td>
+								<td class="td_25" >${report?.xlh}</td>
+								<td class="text_r td_8">车辆自编号:</td>
+								<td class="td_25">${report?.zh}</td>
+								<td class="text_r td_8">行驶方向:</td>
+								<td class="td_25">${report?.xsfx} </td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">发生时间:</td>
+								<td class="td_25" >${report?.fssj}</td>
+								<td class="text_r td_8">发生地点:</td>
+								<td class="td_25">${report?.fsdq} ${report?.fsdd}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">限办时间:</td>
+								<td class="td_25" >${report?.limitTime}</td>
+								<td class="text_r td_9">办理意见:</td>
+								<td class="td_25" >${report?.fzdealMessage==''?report?.dealMessage:report?.fzdealMessage}</td>
+								<td class="text_r td_9"></td>
+								<td class="td_25" ></td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">表扬内容:</td>
+								<td class="td_25" colspan=5>
+								#{f.text_area 'tssx',value:report?.content/}
+								</td>
+							</tr>
+							#{/if}
+							#{if report?.sqlb=='28'}
+							<tr bgcolor="#98F5FF">
+								<td colspan=6>
+									咨询内容
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">咨询行业:</td>
+								<td class="td_25">#{f.dicValue dic_sqlb,key:report?.sqlb /}</td>
+								<td class="text_r td_8">咨询类别:</td>
+								<td class="td_25">#{f.dicValue dic_zxlbid,key:report?.zxlbid /}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">限办时间:</td>
+								<td class="td_25" >${report?.limitTime}</td>
+								<td class="text_r td_9">办理意见:</td>
+								<td class="td_25" >${report?.fzdealMessage==''?report?.dealMessage:report?.fzdealMessage}</td>
+								<td class="text_r td_9"></td>
+								<td class="td_25" ></td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">咨询内容:</td>
+								<td class="td_25" colspan=5>
+								#{f.text_area 'tssx',value:report?.content/}
+								</td>
+							</tr>
+							#{/if}
+							#{if report?.sqlb=='31'}
+							<tr bgcolor="#98F5FF">
+								<td colspan=6>
+									其他内容
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_9">内容:</td>
+								<td class="td_25" colspan=5>
+								#{f.text_area 'tssx',value:report?.content/}
+								</td>
+							</tr>
+							#{/if}
+							#{if report?.logs}
+							<tr bgcolor="#98F5FF">
+								<td colspan=6>
+									办理信息
+								</td>
+							</tr>
+							
+							<tr>
+								<table  class="show_tab" style="width:100%">
+									<tr  class="tr_bg">
+										<td width="50">序号</td><td width="100">工作名称</td><td width="100">办理单位</td><td width="100">办理结果</td><td>办理情况</td><td width="200">完成时间</td>
+									</tr>
+									#{list items:report?.logs,as:'log'}
+										<tr>
+											<td>${log_index}</td>
+											<td>${log?.gzmc}</td>
+											<td>${log?.bldw}</td>
+											<td>${log?.bljg}</td>
+											<td>${log?.blqk}</td>
+											<td>${log?.wcsj}</td>
+										</tr>
+									#{/list}
+								</table>
+							</tr>
+							
+							#{/if}
+							
+							#{if report.assignee=='0'||report.statusId=='11'}
+							<tr id="btn2">
+							<td colspan=5>
+								   #{f.button '签收',href:'javascript:qianshou();',class:'save btn1' /}
+								 	#{if report.statusId=='13'}
+								 	 #{f.button '转办',href:'javascript:zhuanban();',class:'save btn1' /}
+								 	#{/if}
+								   #{f.button '退回',href:'javascript:tuihui()',class:'save btn1'/}
+							<td>
+							</tr>
+							#{/if}
+							#{else}
+								<tr>
+								<td colspan=5>
+									   #{f.button '退回',href:'javascript:tuihui();',class:'save btn1' /}
+									   #{if user.name==dic_admin}
+									   #{f.button '转办',href:'javascript:zhuanban();',class:'save btn1' /}
+									   #{/if}
+									   #{f.button '填写处理结果',href:'javascript:tianxiechulijiekguo()',class:'save btn1'/}
+									   #{f.button '申请延期',href:'javascript:shenqingyanqi()',class:'save btn1'/}
+									   #{f.button '导出',href:'javascript:daochu()',class:'save btn1'/}
+								<td>
+								</tr>
+							#{/else}
+						</tbody>
+					</table>
+					<br/>
+					<span> </span>
+					<br/>
+					<br/>
+					
+					<div id="content_div" style="padding-bottom:10px;">
+					#{f.hidden_field 'id',value:report?.id /}
+					#{f.hidden_field 'typeid',id:'typeid',value:'1' /}
+					
+					<span  id="labthyj"  style="display:none">
+					<br/>
+						<table>
+							<tr>
+								<td class="text_r td_9">退回意见:</td>
+								<td  style="width:800px;">
+								#{f.text_area 'thyj',value:report?.statusId=='13'?log?.blqk:''/}
+								</td>
+								<td>
+								#{f.button '确定退回',href:'javascript:qdth()',class:'cancel btn2'/}
+								</td>
+							</tr>
+						</table>
+					</span>
+					<span id="labzhuanban" style="display:none">
+					<br/>
+						<table>
+							<tr>
+								<td class="text_r td_9">转办单位:</td>
+								<td  style="width:200px;">
+								#{f.select 'twounit',dicName:dic_twounit,blank:'true',blankTitle:'请选择' /}
+								</td>
+								<td class="text_r td_9">备注:</td>
+								<td  style="width:600px;">
+								#{f.text_area 'bz'/}
+								</td>
+								<td>
+								#{f.button '确定转办',href:'javascript:qdzb()',class:'cancel btn2'/}
+								</td>
+							</tr>
+						</table>
+					</span>
+					
+					#{if report?.statusId=='17'&&user.name==dic_admin}
+					<span  id="labsqyq">
+					#{/if}
+					#{else}
+					<span  id="labsqyq" style="display:none;">
+					#{/else}
+					<br/>
+						<table>
+							<tr>	
+								<td class="text_r td_9">申请延期:</td>
+								<td style="width:300px;">
+								#{f.text_field 'limitTime',value:report?.lc/}个工作日
+								</td>
+								<td class="text_r td_9">限办时期:</td>
+								<td style="width:300px;">
+								#{f.datePicker 'limitDate',value:report?.limitDate/}
+								</td>
+							</tr>
+							<tr>
+							<td class="text_r td_9">
+							延期理由:
+							</td>
+							<td style="width:600px;">
+							#{f.text_area 'sqyq',value:log?.blqk/}
+							</td>
+							<td colspan=2>
+									#{if report?.statusId=='17'}
+									#{f.button '申请通过',href:'javascript:sqyqtg()',class:'cancel btn2'/}
+									#{f.button '申请失败',href:'javascript:sqyqsb()',class:'cancel btn2'/}
+									#{/if}
+									#{else}
+									#{f.button '确定申请',href:'javascript:qdsq()',class:'cancel btn2'/}
+									#{/else}
+								</td>
+							</tr>
+						</table>
+					</span>
+					#{if report?.statusId=='15'&&user.name==dic_admin}
+					<span  id="labblyj">
+					#{/if}
+					#{else}
+					<span  id="labblyj"  style="display:none">
+					#{/else}
+					<br/>
+						<table>
+							<tr>
+							<td>
+							办理意见:
+							</td>
+							<td style="width:800px;">
+							#{f.text_area 'blyj',value:report?.statusId=='15'?log?.blqk:''/}
+							</td>
+							<td>
+							#{if report?.statusId=='15'}
+							#{f.button '审核通过',href:'javascript:qdbltg()','onclick':"this.setAttribute('disabled','disabled')",class:'cancel btn2'/}
+							#{f.button '审核未通过',href:'javascript:qdblsb()',class:'cancel btn2'/}
+							#{/if}
+							#{else}
+							#{f.button '确定办理',href:'javascript:qdbl()',class:'cancel btn2'/}
+							#{/else}
+							</td>
+							</tr>
+						</table>
+					</span>
+					</div>
+					#{/form}
+				</div>
+			</div>
+			<div style="padding-top:1px;"></div>
+<script type="text/javascript">
+/**
+ * 导出
+ */
+function daochu(){
+	$("#typeid").val("dc");
+	$('#form').submit();
+}
+/**
+ * 签收
+ */
+function qianshou(){
+	dsave1();
+	$("#typeid").val("0");
+	$('#form').submit();
+}
+/**
+ * 退回
+ */
+function tuihui(){
+	dsave1();
+	$("#labthyj").css("display","block");
+}
+function dsave1(){
+	$(".btn1").css("color","#afafaf");
+	$(".btn1").removeAttr('href');//去掉a标签中的href属性 
+	$(".btn1").removeAttr('onclick');//去掉a标签中的onclick事件 
+}
+function dsave2(){
+	$(".btn2").css("color","#afafaf");
+	$(".btn2").removeAttr('href');//去掉a标签中的href属性 
+	$(".btn2").removeAttr('onclick');//去掉a标签中的onclick事件 
+}
+/**
+ * 审核通过 退回
+ */
+function qdth(){
+	dsave2();
+	$("#typeid").val("1");
+	$('#form').submit();
+}
+/**
+ * 审核失败 退回
+ */
+function qdthsb(){
+	dsave2();
+	$("#typeid").val("5");
+	$('#form').submit();
+}
+/**
+ * 转办
+ */
+function zhuanban(){
+	dsave1();
+	$("#labzhuanban").css("display","block");
+	$("#typeid").val("2");
+}
+/**
+ * 确定转办
+ */
+function qdzb(){
+	dsave2();
+	$('#form').submit();
+}
+function tjzb(){
+	console.log($("#labzhuanban").html());
+	$("#content_div").append($("#labzhuanban").html());
+	$("#labzhuanban").show();
+	console.log(1221);
+}
+/**
+ * 填写处理结果 办结
+ */
+function tianxiechulijiekguo(){
+	dsave1();
+	$("#labblyj").css("display","block");	
+	$("#typeid").val("3");
+}
+/**
+ * 确定办理 办结
+ */
+function qdbl(){
+	dsave2();
+	$('#form').submit();
+}
+/**
+ * 审核通过 办结
+ */
+function qdbltg(){
+	dsave2();
+	$("#typeid").val("6");
+	$('#form').submit();
+}
+/**
+ * 审核失败 办结
+ */
+function qdblsb(){
+	dsave2();
+	$("#typeid").val("7");
+	$('#form').submit();
+}
+
+/**
+ * 申请延期btn
+ */
+function shenqingyanqi(){
+	dsave1();
+	$("#labsqyq").css("display","block");
+	$("#typeid").val("4");
+}
+/**
+ * 申请延期 
+ */
+function qdsq(){
+	dsave1();
+	$('#form').submit();
+}
+/**
+ * 申请延期通过
+ */
+function sqyqtg(){
+	dsave2();
+	$("#typeid").val("8");
+	$('#form').submit();
+}
+/**
+ * 申请延期失败
+ */
+function sqyqsb(){
+	dsave2();
+	$("#typeid").val("9");
+	$('#form').submit();
+}
+</script>

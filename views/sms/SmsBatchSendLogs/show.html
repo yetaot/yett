@@ -1,0 +1,93 @@
+#{extends 'main.html'/}
+%{
+_SMS_TEMPLATE_NAME=models.utils.SecurityConstant.DIC_SMS_TEMPLATE_NAME;
+_SMS_MOBILE_SOURCE=models.utils.SecurityConstant.DIC_SMS_MOBILE_SOURCE;
+_ALL_USER_NAME=models.utils.SecurityConstant.DIC_ALL_USER_NAME;
+_STATUS=models.utils.SecurityConstant.AGENT_STATUS;
+}%
+			<div class="up_sction">
+				<h3 class="h3" >
+					<em>短信批次历史详情</em>
+					<span class="bannerBtn_list">
+						#{f.button '返回',href:@sms.SmsBatchSendLogs.index(),class:'query'/}
+					</span>
+				</h3>
+				<div class="formTab_bj">
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">发送号码：</td>
+								<td class="td_25">${log?.sender}</td>
+								<td class="text_r td_8">接收号码：</td>
+								<td class="td_25">${log?.acceptor}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">发送批次：</td>
+								<td class="td_25">${log?.batchNo}</td>
+								<td class="text_r td_8">号码来源：</td>
+								<td class="td_25">#{f.dicValue _SMS_MOBILE_SOURCE,key:log?.mobileSource  /}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">操作人：</td>
+								<td class="td_25">${log?.operator?.name}</td>
+								<td class="text_r td_8">操作时间：</td>
+								<td class="td_25">${log?.updatedAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">创建时间：</td>
+								<td class="td_25">${log?.createdAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td class="text_r td_8">发送时间：</td>
+								<td class="td_25">${log?.sendAt}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">使用模板：</td>
+								<td class="td_25">#{f.dicValue _SMS_TEMPLATE_NAME, key:log?.templateId /}</td>
+								<td class="text_r td_8">文件路径：</td>
+								<td class="td_25">${log?.filePath}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">发送数量：</td>
+								<td class="td_25">${log?.sendCount}</td>
+								<td class="text_r td_8">成功数量：</td>
+								<td class="td_25">${log?.succCount}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">失败数量：</td>
+								<td class="td_25">${log?.failCount}</td>
+								<td class="text_r td_8">返回代码：</td>
+								<td class="td_25">${log?.rCode}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">错误描述：</td>
+								<td class="td_25">${log?.rDesc}</td>
+								<td class="text_r td_8">审核状态：</td>
+								<td class="td_25">
+									#{f.dicValue _STATUS,key:log?.auditStatus /}
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">审核人：</td>
+								<td class="td_25">#{f.dicValue _ALL_USER_NAME,key:log?.auditor+'' /}</td>
+								<td class="text_r td_8">审核时间：</td>
+								<td class="td_25">
+									${log?.auditedAt?.format('yyyy-MM-dd HH:mm:ss')}
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">审核备注：</td>
+								<td class="td_25">${log?.auditReason?.raw()}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">内容：</td>
+								<td class="td_25">${log?.content?.raw()}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>

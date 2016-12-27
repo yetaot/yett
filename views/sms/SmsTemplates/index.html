@@ -1,0 +1,87 @@
+#{extends 'main.html'/}
+%{
+	_ALL_USER_NAME = models.utils.SecurityConstant.DIC_ALL_USER_NAME;
+	_SMS_TEMPLATE_STATUS=models.utils.SecurityConstant.DIC_SMS_TEMPLATE_STATUS;
+}%
+			<div class="up_sction">
+				<h3 class="h3 clear">
+					<em>短信模板查询</em>
+					<span class="bannerBtn_list">
+						#{f.button '查询',href:'javascript:query();',class:'query'/}
+						#{f.button '新增',href:@sms.SmsTemplates.add(),class:'add' /}
+					</span>
+				</h3>
+				<div class="formTab_bj listPage_bj">
+				 #{form @sms.SmsTemplates.index(),method:'GET',id:'form'}
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">模板名称：</td>
+								<td class="td_25">
+									#{q.text_field 'query.name'/}
+								</td>
+								<td class="text_r td_8">状态：</td>
+								<td class="td_25">
+								#{q.select 'query.status',dicName:_SMS_TEMPLATE_STATUS,blank:'true',blankTitle:'全部',value:params['query.status']/}
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					#{/form}
+				</div>
+			</div>
+			<div class="down_sction">
+				<h3 class="h3">模板信息</h3>
+				<div class="showTab_bj">
+					<table class="show_tab">
+						<thead>
+							<tr class="tr_bg">
+								<th>编号</th>
+								<th>模板名称</th>
+								<th>状态</th>
+								<!-- <th>电话按键</th> -->
+								<th>创建人</th>
+								<th>创建时间</th>
+								<th>提交审核时间</th>
+								<th width="100px;">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+						#{list items:rs?.results,as:'template'}
+							<tr class=${template_parity=="odd"?"":"bg1"}>
+								<td>${template_index}</td>
+								<td>${template?.name}</td>
+								<td>#{f.dicValue _SMS_TEMPLATE_STATUS, key:template?.status /}</td>
+								<!-- <td>${template?.templateCode}</td> -->
+								<td>#{f.dicValue _ALL_USER_NAME,key:template?.creatorId+'' /}</td>
+								<td>${template?.createdAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td>${template?.submittedAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td>
+									 #{f.link_to '查看',href:@sms.SmsTemplates.show(template?.id),class:'query_btn' /}
+									 #{if template?.status != 'pending'}
+									#{f.link_to '修改',href:@sms.SmsTemplates.edit(template?.id),class:'edit_btn' /}
+									#{f.link_to '删除',href:@sms.SmsTemplates.destroy(template?.id),method:'DELETE',class:'delet_btn' /}
+									#{/if}
+							     </td>
+							</tr>
+							#{/list}
+							#{else}
+							 <tr >
+							 <td colspan="7">暂时没有数据！</td>
+							 </tr>
+							#{/else}
+						</tbody>
+					</table>
+					#{if rs?.pager}
+                		 #{f.pagination pager:rs?.pager,url:'/smsTemplates' /}
+					#{/if}
+				</div>
+			</div>
+<script type="text/javascript">
+		function query(){
+			$('#form').submit();
+		}
+	</script>

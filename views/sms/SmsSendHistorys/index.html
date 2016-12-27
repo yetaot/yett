@@ -1,0 +1,170 @@
+#{extends 'main.html'/}
+%{
+	_SMS_SEND_STATUS_NAME=models.utils.SecurityConstant.DIC_SMS_SEND_STATUS_NAME;
+	_SMS_SEND_SOURCE_NAME=models.utils.SecurityConstant.DIC_SMS_SEND_SOURCE_NAME;
+	_STATUS=models.utils.SecurityConstant.AGENT_STATUS;
+}%
+			<div class="up_sction">
+				<h3 class="h3 clear">
+					<em>短信发送列表</em>
+					<span class="bannerBtn_list">
+						#{f.button '查询',href:'javascript:query();',class:'query'/}
+						#{f.button '批量删除',href:'javascript:batchDelete()',class:'add' /}
+					</span>
+				</h3>
+				<div class="formTab_bj listPage_bj">
+				 #{form @sms.SmsSendHistorys.index(),method:'GET',id:'form'}
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">接收号码：</td>
+								<td class="td_25">
+									#{q.text_field 'query.acceptor'/}
+								</td>
+								<td class="text_r td_8">发送日期：</td>
+								<td class="td_25">#{q.combin_datePicker name:'query.beginTime',endName:'query.endTime','data-format':'Y-m-d' /}</td>
+								<td class="text_r td_8">发送状态：</td>
+								<td class="td_25">
+								#{q.select 'query.sendResult',dicName:_SMS_SEND_STATUS_NAME,blank:'true',blankTitle:'全部',value:params['query.sendResult']/}
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">类型：</td>
+								<td class="td_25">
+								#{q.select 'query.source',dicName:_SMS_SEND_SOURCE_NAME,blank:'true',blankTitle:'全部',value:params['query.source']/}
+								</td>
+								<td class="text_r td_8">审核状态：</td>
+								<td class="td_25">
+								#{q.select 'query.auditStatus',dicName:_STATUS,value:params['query.auditStatus'],blank:'true',blankTitle:'全部'/}
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					#{/form}
+				</div>
+			</div>
+			<div class="down_sction">
+				<h3 class="h3">列表信息</h3>
+				<div class="showTab_bj">
+					<table class="show_tab">
+						<thead>
+							<tr class="tr_bg">
+								<th width="25px;"><input type="checkbox" name="checkAll" id="checkAll" /></th>
+								<th>接收号码</th>
+								<th>创建时间</th>
+								<th>审核状态</th>
+								<td>发送时间</td>
+								<th>发送状态</th>
+								<td>操作人</td>
+								<th>类型</th>
+								<th width="100px;">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+						#{list items:rs?.results,as:'history'}
+							<tr class=${history_parity=="odd"?"":"bg1"}>
+									<td><input type="checkbox" name="cb" value="${history?.id}" /></td>
+								<td>${history?.acceptor}</td>
+								<td>${history?.createdAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td>#{f.dicValue _STATUS,key:history?.auditStatus /}</td>
+								<td>${history?.sendAt}</td>
+								<td>#{f.dicValue _SMS_SEND_STATUS_NAME,key:history?.sendResult /}</td>
+								<td>${history?.operator?.name}</td>
+								<td>#{f.dicValue _SMS_SEND_SOURCE_NAME,key:history?.source /}</td>
+								<td>
+									 #{f.link_to '详情',href:@sms.SmsSendHistorys.show(history?.id),class:'query_btn' /}
+									 #{f.link_to '删除',href:@sms.SmsSendHistorys.delete(history?.id),method:'DELETE',class:'delet_btn' /}
+									 #{if history?.auditStatus=='succAudit'}
+									 #{if history?.sendResult == 'notSend'}
+									#{f.link_to '发送',href:@sms.SmsSendHistorys.resend(history?.id),class:'configure_btn' /}
+									#{/if}
+									#{elseif history?.sendResult =='failure' || history?.sendResult == 'await'}
+									#{f.link_to '再次发送',href:@sms.SmsSendHistorys.resend(history?.id),class:'configure_btn' /}
+									#{/elseif}
+									#{/if}
+							     </td>
+							</tr>
+							#{/list}
+							#{else}
+							 <tr >
+							 <td colspan="9">暂时没有数据！</td>
+							 </tr>
+							#{/else}
+						</tbody>
+					</table>
+					#{if rs?.pager}
+                		 #{f.pagination pager:rs?.pager,url:'/smsSendHistorys' /}
+					#{/if}
+				</div>
+			</div>
+<script type="text/javascript">
+		function query(){
+			$('#form').submit();
+		}
+		$(function(){
+			$("#checkAll").click(function(){
+				var obj = $("input[name='cb']");
+				if(this.checked == true){
+					$.each(obj,function(i,n){
+						n.checked = true;
+					})
+				}else{
+					$.each(obj,function(i,n){
+						n.checked = false;
+					})
+				}
+			})
+		});
+		function batchResend(){
+			var obj = $("input[name='cb']:checked");
+			var ids = "";
+			for(var i = 0; i<obj.size(); i++){
+				if(i == 0){
+					ids += obj[i].value;
+				}else{
+					ids += ','+obj[i].value;
+				}
+			}
+			if(ids == ''){
+				showTipBox('提示',"请选择短信发送记录");
+				setTimeout(closeTipBox,3000);
+			}else{
+				$.getJSON("/smsSendHistory/batchResend",{ids:ids},function(data){
+					if(data){
+						showTipBox('提示',"已放入短信发送队列,等待发送");
+					}else{
+						showTipBox('提示',"短信批量重发失败");
+					}
+				});
+			}	
+		}
+		function batchDelete(){
+			var obj = $("input[name='cb']:checked");
+			var ids = "";
+			for(var i = 0; i<obj.size(); i++){
+				if(i == 0){
+					ids += obj[i].value;
+				}else{
+					ids += ','+obj[i].value;
+				}
+			}
+			if(ids == ''){
+				showTipBox('提示',"请选择短信发送记录");
+				setTimeout(closeTipBox,3000);
+			}else{
+				if(confirm("您确定要批量删除这些发送记录吗?")){
+					$.getJSON("/smsSendHistory/batchDelete?x-http-method-override=DELETE", {ids:ids}, function(data){
+						if(data){
+							showTipBox('提示',"发送记录批量删除成功");
+						}else{
+							showTipBox('提示',"发送记录批量删除失败");
+						}
+					});
+					setTimeout(query,1100);
+				}					
+			}
+		}
+	</script>

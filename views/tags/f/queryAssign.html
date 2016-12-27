@@ -1,0 +1,119 @@
+%{
+    ( _arg ) &&  ( _name = _arg);
+    if(! _name) {
+        throw new play.exceptions.TagInternalException("name attribute cannot be empty for select tag");
+    }
+	if(!_queryUrl){
+		throw new play.exceptions.TagInternalException("queryUrl attribute cannot be empty for select tag");
+	}
+	if(!_valueProperty)
+        _valueProperty = 'id';
+    
+    if(_dicName){
+    	 String[] arr = _dicName.tokenize('.');
+    	if(arr.size()>1){
+    		dicElements = framework.utils.DicUtil.getAllByDicName(arr[0],_dicName);
+    	}else{
+    		dicElements = framework.utils.DicUtil.getAllByDicName(_dicName);
+    	}
+    }
+    
+    play.templates.TagContext.current().data.put("selected", _value);
+	
+    serializedAttrs  = play.templates.FastTags.serialize(_attrs,"app","id","size", "name", "labelProperty", "value", "valueProperty","dicConfig","dicName","unassign","assigned","unassignName","queryName","queryUrl","queryTitle").raw();
+}%
+<input type="text" value="${_queryTitle?:'检索'}" name="${_queryName?_queryName:'queryName'}"/><br/>
+<select name="${_unassignName?_unassignName:'unassign_'+_name}" id="unassign_${_id}" multiple="multiple" class='se_option' size="${_size?_size:'7'}" ${serializedAttrs}>
+  	#{if _blank} <option value="">${_blankTitle}</option>#{/if}
+    #{doBody /}
+    #{list items:_unassign, as:'i'}
+        <option value="${_valueProperty && i.hasProperty(_valueProperty) ? i[_valueProperty] : i}">${_labelProperty && i.hasProperty(_labelProperty) ? play.utils.HTML.htmlEscape(null!=i[_labelProperty]?i[_labelProperty].toString():i[_labelProperty]) : i}</option>
+       
+    #{/list}
+    #{list items:dicElements, as:'k'}
+    	<option value="${k?.key}">${k?.value}</option>
+    #{/list}
+   
+</select>
+<span class="move_img"><img src="/public/images/wang4.gif" name="wang4" code="wang4_c" class="assign_toggle_${_id}"/><img src="/public/images/wang5.gif" name="wang5" code="wang5_c" class="unassign_toggle_${_id}"/></span>
+
+<select name="${_name}"  id="assigned_${_id}" multiple="multiple" size="${_size?_size:'7'}" class='se_option'  ${serializedAttrs}>
+    #{doBody /}
+    #{list items:_assigned, as:'i'}
+        <option value="${_valueProperty && i.hasProperty(_valueProperty) ? i[_valueProperty] : i}">${_labelProperty && i.hasProperty(_labelProperty) ? play.utils.HTML.htmlEscape(null!=i[_labelProperty]?i[_labelProperty].toString():i[_labelProperty]) : i}</option>
+    #{/list}
+  
+   
+</select>
+
+#{f.required _req /}
+#{f.error _arg/}
+
+<script type="text/javascript">
+var jq=$;
+var queryTitle=$.trim("${_queryTitle?:'检索'}");
+var queryText=$("input[type='text'][name='"+"${_queryName?_queryName:'queryName'}"+"']");
+var app = '${_app}';
+if(app){
+	jq = $F.ui.apps[app].jq;
+}
+queryText.focus(function(){
+	var value=this.value;
+	if(queryTitle==$.trim(value)){
+		this.value='';
+	}
+});
+queryText.blur(function(){
+	var value=this.value;
+	if($.trim(value)==''){
+		this.value=queryTitle;
+	}
+});
+queryText.change(function(){
+	var value=this.value;
+	if(queryTitle==$.trim(value)){
+		value='';
+	}
+	jq.post('${_queryUrl}',{queryName:value},function(data){
+		$("#unassign_${_id}").find("option").remove();
+		var options="";
+		if(data.length>0){
+			var values=queryValues();
+			for(var i=0;i<data.length;i++){
+				var option=data[i];
+				if(values.indexOf(","+option.key+",")<0){
+					options=options+"<option value="+option.key+">"+option.value+"</option>";
+				}
+			}
+		}
+		$("#unassign_${_id}").append(options);
+	});
+});
+queryText.change();
+function queryValues(){
+	var values="";
+	$("#assigned_${_id}").find("option").each(function(){
+		values=values+","+this.value;
+	});
+	return values.length>0?values+",":"";
+}
+$(document).ready(function(){
+	$('.assign_toggle_${_id}').assign_toggle('#unassign_${_id}','#assigned_${_id}');
+	$('.unassign_toggle_${_id}').assign_toggle('#assigned_${_id}','#unassign_${_id}');
+});
+
+$.fn.extend({
+	assign_toggle:function(source_exp,target_exp){
+		 return this.click(function(){
+	        var source_obj = $(source_exp);
+	        var target_obj = $(target_exp);
+	        var select_obj = source_obj.find('option:selected');
+	        select_obj.remove();
+	        select_obj.each(function(i,n){
+	                target_obj.append('<option  value='+n.value+'>'+n.innerHTML+'</option>');
+	        });
+	     
+	});
+	}	
+})
+</script>

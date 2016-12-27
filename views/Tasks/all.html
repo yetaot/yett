@@ -1,0 +1,75 @@
+%{
+	_AGENT_NAME = framework.base.Constant.DIC_USER_NAME;
+	_STATUS_NAME = models.utils.SecurityConstant.DIC_TASK_STATUS_NAME;
+}%
+#{extends 'main.html' /}
+<div class="up_sction">
+	<h3 class="h3 clear">
+		<em>全部下载</em>
+		<span class="bannerBtn_list">#{f.button '查询',id:'query',class:'query autonomy_btn'/}</span>
+	</h3>
+	<div class="formTab_bj listPage_bj">
+	#{form @Tasks.all(),method:'GET',name:'queryForm'}
+		<table class="form_tab">
+			<tbody>
+				<tr>
+					<td class="text_r td_8">创建人：</td>
+					<td class="td_25">#{f.autoComplete 'query.creatorId',id:'creator',val:'id',url:@AutoComplete.queryActiveUser(),spanClass:'input_text'/}</td>
+					<td class="text_r td_8">状态：</td>
+					<td class="td_25">#{q.select 'query.status',dicName:_STATUS_NAME,blank:'true',blankTitle:'全部',class:'select',value:params['query.status']/}</td>
+					<td class="text_r td_8">创建时间：</td>
+					<td class="td_45">#{q.combin_datePicker name:'query.beginAt',endName:'query.endAt' /}</td>
+				</tr>
+			</tbody>
+		</table>
+	#{/form}
+	</div>
+</div>
+<div class="down_sction">
+	<h3 class="h3">全部下载</h3>
+	<div class="showTab_bj">
+		<table class="show_tab">
+			<thead>
+				<tr class="tr_bg">
+					<th>序号</th>
+					<th>创建时间</th>
+					<th>创建人</th>
+					<th>任务状态</th>
+					<th>下载次数</th>
+					<th>文件名称</th>
+					<th>备注</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				#{list items:rs?.results,as:'vo'}
+				<tr class=${vo_parity=="odd"?"bg0":"bg1"} rcd="${vo}">
+							<td>${vo?.id }</td>
+							<td>${vo?.createdAt.format('yyyy-MM-dd HH:mm:ss')}</td>
+							<td>#{f.dicValue _AGENT_NAME,key:vo?.creatorId+'' /}</td>
+							<td>#{f.dicValue _STATUS_NAME,key:vo?.status /}</td>
+							<td>${vo?.count}</td>
+							<td>${vo?.fileName}</td>
+							<td>${(vo?.note?.length()>20)?(vo?.note[0..19]+'...'):(vo?.note)}</td>
+					<td>	
+						#{f.link_to '下载',href:@Tasks.download(vo?.id),class:'download_btn'/}
+						#{f.link_to '删除',href:@Tasks.destroy(vo?.id),method:'DELETE',class:'delet_btn'/}
+					</td>
+				</tr>
+				#{/list}
+				#{ifnot rs?.results}
+					<tr class="bg0"><td colspan="8" align="center">暂无记录</td></tr>
+				#{/ifnot}	
+			</tbody>
+		</table>
+		<div class="mrb">#{f.pagination pager:rs?.pager,url:'/download/all' /}</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#query').click(function(){
+		$('form[name="queryForm"]').submit();
+	});
+})
+</script>
+</html>

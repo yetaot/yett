@@ -1,0 +1,8 @@
+# Application dependencies
+
+require:
+    - play
+    - play -> redis 0.3
+    - org.apache.poi -> poi 3.9
+    - org.apache.poi -> poi-ooxml 3.9
+    - jexcelapi -> jxl 2.6

@@ -1,0 +1,187 @@
+#{extends 'main.html'/}
+%{
+	dic_tsbs=models.utils.SecurityConstant.dic_tsbs;
+	dic_jjcd=models.utils.SecurityConstant.dic_jjcd;
+	dic_sqlb=models.utils.SecurityConstant.dic_sqlb;
+	dic_orderid=models.utils.SecurityConstant.dic_orderId;
+	dic_twounit=models.utils.SecurityConstant.dic_twounit;
+	dic_bs=models.utils.SecurityConstant.dic_bs;	
+}%
+
+<div class="up_sction">
+	<h3 class="h3 clear">
+		<em>查询</em>
+		<span class="bannerBtn_list">
+			#{f.button '查询',href:'javascript:query();',id:'btnQuery',class:'query autonomy_btn btn1'/}
+			#{f.button '导出',href:'javascript:exportQuery();',id:'exportQuery',class:'query autonomy_btn btn1'/}
+			#{f.button '待签收('+dqs+')',href:'javascript:daiqianshou();',class:'add btn1'/}
+			#{f.button '待处理('+dcl+')',href:'javascript:daichuli();',class:'add btn1'/}
+			#{f.button '延期审核('+yqsh+')',href:'javascript:yanqishenhe();',class:'add btn1'/}
+			#{f.button '退回审核('+thsh+')',href:'javascript:tuihuishenhe();',class:'add btn1'/}
+			#{f.button '完成审核('+wcsh+')',href:'javascript:wanchengshenhe();',class:'add btn1'/}
+		</span>
+	</h3>
+	<div class="formTab_bj listPage_bj">
+	#{form @order.ReportOrders.index(),method:'GET',id:'form'}
+		<table class="form_tab">
+			<tbody>
+				<tr>
+					#{f.hidden_field 'query.reOption',value:query?.reOption,id:'reOption'/}
+					#{f.hidden_field 'query.reValue',value:query?.reValue,id:'reValue'/}
+					#{f.hidden_field 'page',value:page /}
+					<td class="text_r td_8">工单编号：</td>
+					<td class="td_25">#{q.text_field 'query.formId' /}</td>
+					<td class="text_r td_8">诉求人：</td>
+					<td class="td_25">#{q.text_field 'query.username' /}</td>
+					<td class="text_r td_8">来电号码：</td>
+					<td class="td_25">#{q.text_field 'query.linkphone' /}</td>
+				</tr>
+				<tr>
+					<td class="text_r td_8">诉求类型：</td>
+					<td class="td_25">
+					#{q.select 'query.sqlb',dicName:dic_sqlb,value:params['query.sqlb'],blank:'true',blankTitle:'全部'/}
+					</td>
+					<td class="text_r td_8">状态：</td>
+					<td class="td_25">
+					#{q.select 'query.statusId',dicName:dic_orderid,value:params['query.statusId'],blank:'true',blankTitle:'全部'/}
+					</td>
+					<td class="text_r td_8">派单日期：</td>
+					<td class="td_45">#{q.combin_datePicker name:'query.beginAt',endName:'query.endAt' /}</td>
+				</tr>
+				<tr>
+					<td class="text_r td_8">单位：</td>
+					<td class="td_25">
+					#{q.select 'query.twounit',dicName:dic_twounit,blank:'true',blankTitle:'请选择' /}
+					</td>
+					<td class="text_r td_8">标识：</td>
+					<td class="td_25">
+					#{q.select 'query.bs',dicName:dic_bs,value:params['query.bs'],blank:'true',blankTitle:'全部'/}
+					</td>
+					<td class="text_r td_8"></td>
+					<td class="td_45"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="down_sction">
+	<h3 class="h3">工单信息</h3>
+	<div class="showTab_bj">
+		<table class="show_tab">
+			<thead>
+				<tr class="tr_bg">
+					<th width="5%"><input type="checkbox" name="cb" id="checkAll" /></th>
+					<th>编号</th>
+					<th>加急程度</th>
+					<th>标识</th>
+					<th>派单时间</th>
+					<th>诉求人</th>
+					<th>联系方式</th>
+					<th>截止日期</th>
+					<th>状态</th>
+					<th>诉求类别</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+			#{list items:rs.results,as:"vo"}
+				<tr class="${vo_parity=='odd'?'':'bg1'}">
+					<td><input type="checkbox" name="ids" value="${vo?.id}" /></td>
+					<td>${vo?.formId}</td>
+					<td>#{f.dicValue dic_jjcd,key:vo?.jjcd /}</td>
+					<td>
+						#{if vo?.bs}
+						<img alt="${vo?.bs}"  src="public/images/${vo?.bs}.png">
+						#{/if}
+					</td>
+					<td>${vo?.sendDate}</td>
+					<td>${vo?.username}</td>
+					<td>${vo?.linkphone}</td>
+					<td>${vo?.limitDate}</td>
+					<td>#{f.dicValue dic_orderid,key:vo?.statusId /}</td>
+					<td>
+					#{f.dicValue dic_sqlb,key:vo?.sqlb /}
+					</td>
+					<td>
+						<a href="javascript:ck_f(${vo?.id});">查看</a>
+					</td>
+				</tr>
+				#{/list}
+				#{else}<tr><td colspan="12">暂时没有数据！</td></tr>#{/else}
+			</tbody>
+		</table>
+		#{/form}
+		<div class="mrb">#{if rs?.pager}#{f.pagination pager:rs?.pager,url:'/reportOrders' /}#{/if}</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#checkAll").click(function(){
+		var obj = $("input[name='ids']");
+		if(this.checked == true){
+			$.each(obj,function(i,n){
+				n.checked = true;
+			})
+		}else{
+			$.each(obj,function(i,n){
+				n.checked = false;
+			})
+		}
+	})
+});
+function ck_f(id){
+	$("#form").attr('action',"");
+	$("#form").attr('action',"/reportOrders/"+id+"/edit"); 
+	$("#form").attr('method',"GET"); 
+	$("#form").submit();
+}
+function dsave1(){
+	$(".btn1").css("color","#afafaf");
+	$(".btn1").removeAttr('href');//去掉a标签中的href属性 
+	$(".btn1").removeAttr('onclick');//去掉a标签中的onclick事件 
+}
+function exportQuery(){
+	dsave1();
+	$("#form").attr('action',"/reportcheckAlls?"); 
+	$("#form").attr('method',"POST"); 
+	$("#form").submit();
+}
+function daiqianshou(){
+	dsave1();
+	$("#reOption").val("assignee");
+	$("#reValue").val("0");
+	$('#form').submit();
+}
+function daichuli(){
+	dsave1();
+	$("#reOption").val("statusId");
+	$("#reValue").val("7");
+	$('#form').submit();
+}
+function yanqishenhe(){
+	dsave1();
+	$("#reOption").val("statusId");
+	$("#reValue").val("9");
+	$('#form').submit();	
+}
+function tuihuishenhe(){
+	dsave1();
+	$("#reOption").val("statusId");
+	$("#reValue").val("8");
+	$('#form').submit();
+}
+function wanchengshenhe(){
+	dsave1();
+	$("#reOption").val("statusId");
+	$("#reValue").val("10");
+	$('#form').submit();	
+}
+function query(){
+	dsave1();
+	$('#btnQuery').disabled = true;
+	$("#form").attr("action","/reportOrders");
+	$("#form").attr('method',"GET"); 
+	$('#form').submit();
+}
+</script>

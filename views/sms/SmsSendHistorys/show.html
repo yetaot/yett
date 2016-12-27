@@ -1,0 +1,81 @@
+#{extends 'main.html'/}
+%{
+	_SMS_SEND_STATUS_NAME=models.utils.SecurityConstant.DIC_SMS_SEND_STATUS_NAME;
+	_SMS_SEND_SOURCE_NAME = models.utils.SecurityConstant.DIC_SMS_SEND_SOURCE_NAME;
+	_ALL_USER_NAME=models.utils.SecurityConstant.DIC_ALL_USER_NAME;
+	_SMS_TEMPLATE_NAME=models.utils.SecurityConstant.DIC_SMS_TEMPLATE_NAME;
+	_STATUS=models.utils.SecurityConstant.AGENT_STATUS;
+}%
+			<div class="up_sction">
+				<h3 class="h3" >
+					<em>短信发送详情</em>
+					<span class="bannerBtn_list">
+						#{f.button '返回',href:@sms.SmsSendHistorys.index(),class:'query'/}
+					</span>
+				</h3>
+				<div class="formTab_bj">
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">发送号码：</td>
+								<td class="td_25">${history?.sender}</td>
+								<td class="text_r td_8">接收号码：</td>
+								<td class="td_25">${history?.acceptor}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">创建时间：</td>
+								<td class="td_25">${history?.createdAt?.format('yyyy-MM-dd HH:mm')}</td>
+								<td class="text_r td_8">操作人：</td>
+								<td class="td_25">${history?.operator?.name}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">发送批次：</td>
+								<td class="td_25">${history?.batchNo}</td>
+								<td class="text_r td_8">发送时间：</td>
+								<td class="td_25">${history?.sendAt}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">发送状态：</td>
+								<td class="td_25">#{f.dicValue _SMS_SEND_STATUS_NAME,key:history?.sendResult /}</td>
+									<td class="text_r td_8">发送类型：</td>
+								<td class="td_25">#{f.dicValue _SMS_SEND_SOURCE_NAME,key:history?.source /}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">返回代码：</td>
+								<td class="td_25">${history?.rCode}</td>
+								<td class="text_r td_8">错误描述：</td>
+								<td class="td_25">${history?.rDesc}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">所属模板：</td>
+								<td class="td_25">#{f.dicValue _SMS_TEMPLATE_NAME,key:history?.templateId /}</td>
+								<td class="text_r td_8">审核状态：</td>
+								<td class="td_25">
+									#{f.dicValue _STATUS,key:history?.auditStatus /}
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">审核人：</td>
+								<td class="td_25">#{f.dicValue _ALL_USER_NAME,key:history?.auditor+'' /}</td>
+								<td class="text_r td_8">审核时间：</td>
+								<td class="td_25">
+									${history?.auditedAt?.format('yyyy-MM-dd HH:mm:ss')}
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">审核备注：</td>
+								<td class="td_25">${history?.auditReason?.raw()}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">内容：</td>
+								<td class="td_25">${history?.content?.raw()}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>

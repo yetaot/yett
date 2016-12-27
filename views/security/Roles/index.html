@@ -1,0 +1,91 @@
+%{
+_ROLE_TYPE=models.utils.SecurityConstant.DIC_ROLE_TYPE_NAME;
+}%
+#{extends 'main.html' /}
+	<div class="up_sction">
+				<h3 class="h3 clear">
+					<em>角色列表</em>
+					<span class="bannerBtn_list">
+			
+						#{f.button '查询',href:'javascript:query();',class:'query'/}
+						#{f.button '新增',href:@security.Roles.add(),class:'add' /}
+						
+					</span>
+				</h3>
+				<div class="formTab_bj listPage_bj">
+			     #{form @security.Roles.index(),method:'GET',id:'queryForm'}
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">角色名称：</td>
+								<td class="td_25">
+								#{q.text_field 'query.name' /}
+								</td>
+								<td class="text_r td_8">角色类型：</td>
+								<td class="td_25">
+								#{q.select 'query.type',dicName:_ROLE_TYPE,value:params['query.type'],blank:'true',blankTitle:'全部'/}
+									
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+									
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					#{/form}
+				</div>
+			</div>
+			<div class="down_sction">
+				<h3 class="h3">角色列表</h3>
+				<div class="showTab_bj">
+					<table class="show_tab">
+						<thead>
+							<tr class="tr_bg">
+								<th width="6%">序号</th>
+								<th width="15%">角色名称</th>
+								<th width="10%">角色类型</th>
+								<th width="10%">创建时间</th>
+								<th width="14%">更新时间</th>
+								<th width="10%">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+						#{list items:rs?.results,as:'vo'}
+							<tr class=${vo_parity=="odd"?"":"bg1"}>
+								<td>${vo?.id}</td>
+								<td>${vo?.name}</td>
+								<td>#{f.dicValue _ROLE_TYPE,key:vo?.type/}</td>
+								<td>${vo?.createdAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td>${vo?.updatedAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td>
+									#{ifnot vo?.ifSystem==1}
+										#{f.link_to '查看',href:@security.Roles.show(vo?.id),class:'query_btn'/}
+										#{f.link_to '修改',href:@security.Roles.edit(vo?.id),class:'edit_btn'/}
+										#{f.link_to '删除',href:@security.Roles.destroy(vo?.id),method:'DELETE',class:'delet_btn'/}
+									#{/ifnot}
+									
+								</td>
+							</tr>
+						#{/list}
+						#{else}
+						<tr>
+						<td colspan="6">暂无数据</td>
+						</tr>
+						#{/else}	
+					
+						</tbody>
+					</table>
+					 #{if rs?.pager}
+                		 #{f.pagination pager:rs?.pager,url:'/roles' /}
+					#{/if}
+		
+				</div>
+	
+			<div style="padding-top:1px;"></div>
+		</div>
+		<script type="text/javascript">
+			function query(){
+				$('#queryForm').submit();
+			}
+		</script>

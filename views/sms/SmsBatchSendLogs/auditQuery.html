@@ -1,0 +1,89 @@
+#{extends 'main.html' /}
+%{
+	_STATUS=models.utils.SecurityConstant.AGENT_STATUS;
+	_SMS_TEMPLATE_NAME=models.utils.SecurityConstant.DIC_SMS_TEMPLATE_NAME;
+}%
+
+	<div class="up_sction">
+				<h3 class="h3 clear">
+					<em>短信审核</em>
+					<span class="bannerBtn_list">
+					#{f.button '查询',href:'javascript:query();',class:'query'/}
+					</span>
+				</h3>
+				<div class="formTab_bj listPage_bj">
+			     #{form @sms.SmsBatchSendLogs.auditQuery(),method:'GET',id:'queryForm'}
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">发送日期：</td>
+								<td class="td_25">#{q.combin_datePicker name:'query.beginTime',endName:'query.endTime','data-format':'Y-m-d' /}</td>
+								<td class="text_r td_8">使用模板：</td>
+								<td class="td_25">
+								#{q.select 'query.templateId',dicName:_SMS_TEMPLATE_NAME,blank:'true',blankTitle:'全部',value:params['query.templateId']/}
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+							</tr>
+							<tr>
+							<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					#{/form}
+				</div>
+			</div>
+			<div class="down_sction">
+				<h3 class="h3">短信列表</h3>
+				<div class="showTab_bj">
+					<table class="show_tab">
+						<thead>
+							<tr class="tr_bg">
+								<th>批次号</th>
+								<th>审核状态</th>
+								<td>操作人</td>
+								<th>提交时间</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+						#{list items:rs?.results,as:'vo'}
+							<tr class=${vo_parity=="odd"?"":"bg1"}>
+								<td>${vo?.batchNo}</td>
+								<td>#{f.dicValue _STATUS,key:vo?.auditStatus /}</td>
+								<td>${vo?.operator?.name}</td>
+								<td>${vo?.submittedAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td>
+									#{f.link_to '审核',href:@sms.SmsBatchSendLogs.audit(vo?.id),class:'audit_btn' /}
+							     </td>
+							</tr>
+							#{/list}
+							#{else}
+							 <tr >
+							 <td colspan="5">暂时没有数据！</td>
+							 </tr>
+							#{/else}
+						</tbody>
+					</table>
+					 #{if rs?.pager}
+                		 #{f.pagination pager:rs?.pager,url:'/smsBatchSendLogs/auditQuery' /}
+					 #{/if}
+		
+				</div>
+	
+			<div style="padding-top:1px;"></div>
+		</div>
+		<script type="text/javascript">
+			function query(){
+				$('#queryForm').submit();
+			}
+		</script>

@@ -1,0 +1,73 @@
+%{
+    ( _arg ) &&  ( _name = _arg);
+    if(! _name) {
+        throw new play.exceptions.TagInternalException("name attribute cannot be empty for select tag");
+    }
+	
+	if(!_valueProperty)
+        _valueProperty = 'id';
+    
+    if(_dicName){
+    	 String[] arr = _dicName.tokenize('.');
+    	if(arr.size()>1){
+    		dicElements = framework.utils.DicUtil.getAllByDicName(arr[0],_dicName);
+    	}else{
+    		dicElements = framework.utils.DicUtil.getAllByDicName(_dicName);
+    	}
+    }
+    
+    play.templates.TagContext.current().data.put("selected", _value);
+	
+    serializedAttrs  = play.templates.FastTags.serialize(_attrs, "id","size", "name", "labelProperty", "value", "valueProperty","dicConfig","dicName","unassign","assigned","unassignName").raw();
+}%
+<span class="input_select userGroup td_30">
+<select name="${_unassignName?_unassignName:'unassign_'+_name}" id="unassign_${_id}" multiple="multiple" class='se_option' size="${_size?_size:'7'}" ${serializedAttrs}>
+  	#{if _blank} <option value="">${_blankTitle}</option>#{/if}
+    #{doBody /}
+    #{list items:_unassign, as:'i'}
+        <option value="${_valueProperty && i.hasProperty(_valueProperty) ? i[_valueProperty] : i}">${_labelProperty && i.hasProperty(_labelProperty) ? play.utils.HTML.htmlEscape(null!=i[_labelProperty]?i[_labelProperty].toString():i[_labelProperty]) : i}</option>
+       
+    #{/list}
+    #{list items:dicElements, as:'k'}
+    	<option value="${k?.key}">${k?.value}</option>
+    #{/list}
+   
+</select>
+</span>
+<span class="user_direct">
+<a class="arrow arrowR assign_toggle_${_id}" href="javascript:;"></a>
+<a class="arrow arrowL unassign_toggle_${_id}" href="javascript:;"></a>
+</span>
+<span class="input_select userGroup td_30">
+<select name="${_name}"  id="assigned_${_id}" multiple="multiple" size="${_size?_size:'7'}" class='se_option'  ${serializedAttrs}>
+    #{doBody /}
+    #{list items:_assigned, as:'i'}
+        <option value="${_valueProperty && i.hasProperty(_valueProperty) ? i[_valueProperty] : i}">${_labelProperty && i.hasProperty(_labelProperty) ? play.utils.HTML.htmlEscape(null!=i[_labelProperty]?i[_labelProperty].toString():i[_labelProperty]) : i}</option>
+    #{/list}
+  </select>
+</span>
+#{f.required _required /}
+#{f.error _arg/}
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.assign_toggle_${_id}').assign_toggle('#unassign_${_id}','#assigned_${_id}');
+	$('.unassign_toggle_${_id}').assign_toggle('#assigned_${_id}','#unassign_${_id}');
+});
+
+$.fn.extend({
+	assign_toggle:function(source_exp,target_exp){
+		 return this.click(function(){
+	        var source_obj = $(source_exp);
+	        var target_obj = $(target_exp);
+	        var select_obj = source_obj.find('option:selected');
+	        select_obj.remove();
+	        select_obj.each(function(i,n){
+	                target_obj.append('<option  value='+n.value+'>'+n.innerHTML+'</option>');
+	        });
+	     
+	});
+	}	
+})
+
+</script>

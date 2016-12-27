@@ -1,0 +1,86 @@
+#{extends 'main.html'/}
+%{
+	_AUDIT_RESULT=models.utils.SecurityConstant.AUDIT_RESULT;
+	_ALL_USER_NAME=models.utils.SecurityConstant.DIC_ALL_USER_NAME;
+	_SMS_TEMPLATE_NAME=models.utils.SecurityConstant.DIC_SMS_TEMPLATE_NAME;
+	_SMS_MOBILE_SOURCE=models.utils.SecurityConstant.DIC_SMS_MOBILE_SOURCE;
+}%
+			<div class="up_sction">
+				<h3 class="h3" >
+					<em>消息审核页面</em>
+					<span class="bannerBtn_list">
+						#{f.button '返回',href:@message.MessageLogs.auditQuery(),class:'query'/}
+					</span>
+				</h3>
+				<div class="formTab_bj">
+				<form name="editForm" id="editForm" method="post" action="@{sms.SmsBatchSendLogs.auditAction(log?.id)}?x-http-method-override=PUT">
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">发送号码：</td>
+								<td class="td_25">${log?.sender}</td>
+								<td class="text_r td_8">接收号码：</td>
+								<td class="td_25">${log?.acceptor}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">发送批次：</td>
+								<td class="td_25">${log?.batchNo}</td>
+								<td class="text_r td_8">号码来源：</td>
+								<td class="td_25">#{f.dicValue _SMS_MOBILE_SOURCE,key:log?.mobileSource  /}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">操作人：</td>
+								<td class="td_25">${log?.operator?.name}</td>
+								<td class="text_r td_8">操作时间：</td>
+								<td class="td_25">${log?.updatedAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">创建时间：</td>
+								<td class="td_25">${log?.createdAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td class="text_r td_8">发送时间：</td>
+								<td class="td_25">${log?.sendAt}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">使用模板：</td>
+								<td class="td_25">#{f.dicValue _SMS_TEMPLATE_NAME, key:log?.templateId /}</td>
+								<td class="text_r td_8">文件路径：</td>
+								<td class="td_25">${log?.filePath}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">内容：</td>
+								<td class="td_25">${log?.content}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">审核结果：</td>
+								<td class="td_40">
+									#{f.select 'result',dicName:_AUDIT_RESULT,required:'true',value:result /}
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">审核备注：</td>
+								<td class="td_40">
+									#{f.text_area 'auditReason',value:params['auditReason']/}
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+						</tbody>
+					</table>
+					<div >
+						<span class="autonomy" style="width: 260px;">
+							#{f.button '保存',href:'javascript:submitForm();',class:'save' /}
+							#{f.button '取消',href:@sms.SmsBatchSendLogs.auditQuery(),class:'cancel' /}
+						</span>
+					</div>
+					</form>
+				</div>
+			</div>
+			<script type="text/javascript">
+			function submitForm(){
+				$('#editForm').submit();
+			}
+			</script>

@@ -1,0 +1,64 @@
+#{extends 'main.html' /}
+%{
+NO_OR_YES=models.utils.SecurityConstant.DIC_NO_OR_YES_NAME;
+}%
+<div class="up_sction">
+				<h3 class="h3">新增用户</h3>
+				<div class="formTab_bj">
+				#{form @security.Users.create(),method:'POST',id:'form',name:'form'}
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">用户名：</td>
+								<td class="td_40">
+									#{f.text_field 'user.userName',required:'true' /}
+								</td>
+								<td class="text_r td_8">姓名：</td>
+								<td class="td_40">
+									#{f.text_field 'user.name',required:'true' /}
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">密码：</td>
+								<td class="td_40">
+									#{f.password_field 'user.password',required:'true'/}
+								</td>
+								<td class="text_r td_8">密码确认：</td>
+								<td class="td_40">
+									#{f.password_field 'user.passwordConfirm',required:'true'/}
+								</td>
+							</tr>
+                                 <tr>
+                                 <td class="text_r td_8">联系方式：</td>
+								<td class="td_40">
+									#{f.text_field 'user.phone' /}
+								</td>
+								<td class="text_r td_8">是否管理员：</td>
+								<td class="td_40">
+									#{f.select 'user.isAdmin',dicName:NO_OR_YES,value:params['user.isAdmin'],required:'true' /}
+								</td>
+                                 </tr>
+								<tr>
+								<td class="text_r td_8">权限分配：</td>
+								<td class="td_40" colspan="3">
+									#{f.assign 'rids',id:'role',size:'7',unassign:editData.roles,assigned:editData.rids,labelProperty:'value',valueProperty:'key'/}
+								</td>
+								</tr>
+						</tbody>
+					</table>
+					#{/form}
+					<div >
+						<span class="autonomy">
+						    #{f.button '保存',href:'javascript:submitForm();',class:'save' /}
+							#{f.button '取消',href:@security.Users.index(),class:'cancel'/}
+						</span>
+					</div>
+				</div>
+			</div>
+			<div style="padding-top:1px;"></div>
+<script type="text/javascript">
+    function submitForm(){
+    	$("select[name=rids]").find('option').attr('selected',true);
+ 		$('#form').submit();
+	  } 
+</script>

@@ -1,0 +1,61 @@
+#{extends 'main.html'/}
+%{
+NO_OR_YES=models.utils.SecurityConstant.DIC_NO_OR_YES_NAME;
+}%
+			<div class="up_sction">
+				<h3 class="h3">修改用户信息</h3>
+				<div class="formTab_bj">
+				<form id="form" method="post" action="@{security.Users.update(user?.id)}?x-http-method-override=PUT">
+
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">用户名：</td>
+								<td class="td_40">
+									${user?.userName}
+								</td>
+								<td class="text_r td_8">姓名：</td>
+								<td class="td_40">
+									#{f.text_field 'user.name',required:'true',value:user?.name /}
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">密码：</td>
+								<td class="td_40">
+									#{f.password_field 'user.password',required:'true',value:user?.password/}
+								</td>
+								<td class="text_r td_8">密码确认：</td>
+								<td class="td_40">
+									#{f.password_field 'user.passwordConfirm',required:'true',value:user?.password/}
+								</td>
+							</tr>
+							<tr>
+                                 <td class="text_r td_8">联系方式：</td>
+								<td class="td_40">
+									#{f.text_field 'user.phone',value:user?.phone /}
+								</td>
+                                 </tr>
+								<tr>
+								<td class="text_r td_8">权限分配：</td>
+								<td class="td_40" colspan="3">
+									#{f.assign 'rids',id:'role',size:'7',unassign:editData.roles,assigned:editData.rids,labelProperty:'value',valueProperty:'key'/}
+								</td>
+								</tr>
+						</tbody>
+					</table>
+					</form>
+					<div >
+						<span class="autonomy">
+						    #{f.button '保存',href:'javascript:submitForm();',class:'save' /}
+							#{f.button '取消',href:@security.Users.index(),class:'cancel'/}
+						</span>
+					</div>
+				</div>
+			</div>
+			<div style="padding-top:1px;"></div>
+<script type="text/javascript">
+    function submitForm(){
+    	$("select[name=rids]").find('option').attr('selected',true);
+ 		$('#form').submit();
+	  } 
+</script>

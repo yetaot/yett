@@ -1,0 +1,18 @@
+%{
+	(_arg) && (_name = _arg)
+	_showError=_showError?_showError:true;
+	 serializedAttrs  = play.templates.FastTags.serialize(_attrs, "required","name","endName","value","endValue","class","spanClass","spanId").raw();
+}%
+
+<span class="${_spanClass?_spanClass:'input_text td_32'}" id="${_spanId}"><input type="text" class="${_class?_class:''}" name="${_name}" value="${_value?_value:params[_name]}" ${serializedAttrs}></input>
+
+</span>
+  至 
+<span class="${_spanClass?_spanClass:'input_text td_32'}" id="${'end_'+_spanId}"><input type="text" class="${_class?_class:''}" name="${_endName}" value="${_endValue?_endValue:params[_endName]}" ${serializedAttrs}></input>
+
+</span>
+  
+#{f.required _required /}
+#{if _showError==true}
+#{f.error _endName/}
+#{/if}

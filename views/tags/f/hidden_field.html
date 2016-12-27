@@ -1,0 +1,7 @@
+%{
+	(_arg) && (_name=_arg)
+	 serializedAttrs  = play.templates.FastTags.serialize(_attrs).raw();
+}%
+<input type="hidden"  name="${_name}" ${serializedAttrs}></input>
+
+  

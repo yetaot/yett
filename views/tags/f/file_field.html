@@ -1,0 +1,16 @@
+%{
+ 	(_arg) && (_name = _arg)
+	serializedAttrs  = play.templates.FastTags.serialize(_attrs, "required","name").raw();
+}%
+
+<span class="span_text sp_r td_30"><em><span><em class="file_text" id="file_path"></em>
+<input type="file" class="file" name="${_name}" ${serializedAttrs} id="file_loader"/><a href="javascript:void(0);" class="see"><img src="/public/images/see.gif" /></a></span></em></span>
+#{f.required _required /}
+#{f.error _arg /}
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#file_loader').change(function(){
+			$('#file_path').text(this.value);
+		})
+	})
+</script>

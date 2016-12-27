@@ -1,0 +1,67 @@
+#{extends 'main.html' /}
+%{
+_ifUse=models.utils.SecurityConstant.DIC_USER_STATUS_NAME;
+_ifSystem=models.utils.SecurityConstant.DIC_SYSTEM_USER;
+}%
+			<div class="up_sction">
+				<h3 class="h3">
+					<em>查看用户信息</em>
+					<span class="bannerBtn_list">
+						#{f.button '返回',href:@security.users.index(),class:'query'/}
+					</span>
+				</h3>
+				<div class="formTab_bj">
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">姓名:</td>
+								<td class="td_25">${user.name}</td>
+								<td class="text_r td_8">用户名:</td>
+								<td class="td_25">${user.userName}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">联系方式:</td>
+								<td class="td_25">${user.phone}</td>
+								<td class="text_r td_8">创建时间:</td>
+								<td class="td_25">${user.createdAt.format("yyyy-MM-dd HH:mm:ss")}</td>
+							</tr>
+							
+							<tr>
+								<td class="text_r td_8">更新时间:</td>
+								<td class="td_25">${user.updatedAt?.format("yyyy-MM-dd HH:mm:ss")}</td>
+								<td class="text_r td_8">上次登陆时间:</td>
+								<td class="td_25">${user.lastLoginAt?.format("yyyy-MM-dd HH:mm:ss")}</td>
+							</tr>
+							
+							<tr>
+								<td class="text_r td_8">本次登陆时间:</td>
+								<td class="td_25">${user.loginAt?.format("yyyy-MM-dd HH:mm:ss")}</td>
+								<td class="text_r td_8">上次登陆IP:</td>
+								<td class="td_25">${user.lastLoginIp}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">本次登陆IP:</td>
+								<td class="td_25">${user.loginIp}</td>
+								<td class="text_r td_9">所属权限:</td>
+								<td class="td_25" >
+								  #{list items:user.roles,as:"vo"}
+									#{if vo_index == 1 }
+										${vo?.name}
+									#{/if}
+									#{else}
+									 ${","+vo?.name}
+									#{/else}
+								  #{/list}
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">是否系统用户:</td>
+								<td class="td_25">#{f.dicValue _ifSystem,key:user?.ifSystem+""/}</td>
+								<td class="text_r td_8">密钥:</td>
+								<td class="td_25">${user?.secretKey}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div style="padding-top:1px;"></div>

@@ -1,0 +1,5 @@
+%{
+	serializedAttrs  = play.templates.FastTags.serialize(_attrs,"bgClass","class","type").raw();
+}%
+<button class="${_class}" type="${_type?_type:'submit'}"  ${serializedAttrs}><span class="cha_bg ${_bgClass}">${_arg}</span></button>
+				

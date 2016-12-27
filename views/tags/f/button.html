@@ -1,0 +1,10 @@
+%{
+	serializedAttrs  = play.templates.FastTags.serialize(_attrs,"href","bgClass","class","actionCode").raw();
+	if(_actionCode){
+		actions=framework.utils.SecurityUtil.getUserActions();
+	}
+}%
+#{if !_actionCode||actions.indexOf(_actionCode)>-1}
+<a  href=${_href?_href:'javascript:void(0);'} class="${_class?_class:'autonomy_btn'} autonomy_btn" ${serializedAttrs}>${_arg}
+</a>
+#{/if}

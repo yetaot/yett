@@ -1,0 +1,146 @@
+#{extends 'main.html'/}
+			<div class="up_sction">
+				<h3 class="h3 clear">
+					<em>短信接收列表</em>
+					<span class="bannerBtn_list">
+						#{f.button '查询',href:'javascript:query();',class:'query'/}
+						#{f.button '批量删除',href:'javascript:batchDelete()',class:'add' /}
+						#{f.button '批量回复',href:'javascript:batchReply()',class:'query' /}
+					</span>
+				</h3>
+				#{form @sms.SmsReceiveHistorys.batchReply(),method:'GET',id:'replyForm'}
+					<input type="hidden" name="ids"  id="ids" />
+				#{/form}
+				<div class="formTab_bj listPage_bj">
+				 #{form @sms.SmsReceiveHistorys.index(),method:'GET',id:'form'}
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">发送号码：</td>
+								<td class="td_25">
+									#{q.text_field 'query.sender'/}
+								</td>
+								<td class="text_r td_8">接收日期：</td>
+								<td class="td_25">#{q.combin_datePicker name:'query.beginTime',endName:'query.endTime','data-format':'Y-m-d' /}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+							</tr>
+							<tr>
+							<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					#{/form}
+				</div>
+			</div>
+			<div class="down_sction">
+				<h3 class="h3">列表信息</h3>
+				<div class="showTab_bj">
+					<table class="show_tab">
+						<thead>
+							<tr class="tr_bg">
+								<th width="25px;"><input type="checkbox" name="checkAll" id="checkAll" /></th>
+								<th>发送号码</th>
+								<th>接收时间</th>
+								<th width="40%">短信内容</th>
+								<th width="100px;">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+						#{list items:rs?.results,as:'history'}
+							<tr class=${history_parity=="odd"?"":"bg1"}>
+									<td><input type="checkbox" name="cb" value="${history?.id}" /></td>
+								<td>${history?.sender}</td>
+								<td>${history?.revicedAt}</td>
+								<td title="${history?.content}">#{if history?.content?.size()>15}${history?.content?.substring(0,15)}...#{/if}#{else}${history?.content}#{/else}</td>
+								<td>
+									 #{f.link_to '详情',href:@sms.SmsReceiveHistorys.show(history?.id),class:'query_btn'/}
+									#{f.link_to '回复',href:@sms.SmsReceiveHistorys.reply(history?.id),class:'edit_btn'/}
+									#{f.link_to '删除',href:@sms.SmsReceiveHistorys.delete(history?.id),method:'DELETE',class:'delet_btn'/}
+							     </td>
+							</tr>
+							#{/list}
+							#{else}
+							 <tr >
+							 <td colspan="5">暂时没有数据！</td>
+							 </tr>
+							#{/else}
+						</tbody>
+					</table>
+					#{if rs?.pager}
+                		 #{f.pagination pager:rs?.pager,url:'/smsReceiveHistorys' /}
+					#{/if}
+				</div>
+			</div>
+<script type="text/javascript">
+		function query(){
+			$('#form').submit();
+		}
+		$(function(){
+			$("#checkAll").click(function(){
+				var obj = $("input[name='cb']");
+				if(this.checked == true){
+					$.each(obj,function(i,n){
+						n.checked = true;
+					})
+				}else{
+					$.each(obj,function(i,n){
+						n.checked = false;
+					})
+				}
+			})
+		});
+		function batchReply(){
+			var obj = $("input[name='cb']:checked");
+			var ids = "";
+			for(var i = 0; i<obj.size(); i++){
+				if(i == 0){
+					ids += obj[i].value;
+				}else{
+					ids += ','+obj[i].value;
+				}
+			}
+			if(ids == ''){
+				showTipBox('提示',"请选择短信接收记录");
+				setTimeout(closeTipBox,3000);
+			}else{
+				$("#ids").val('').val(ids);
+				$("#replyForm").submit();
+			}	
+		}
+		function batchDelete(){
+			var obj = $("input[name='cb']:checked");
+			var ids = "";
+			for(var i = 0; i<obj.size(); i++){
+				if(i == 0){
+					ids += obj[i].value;
+				}else{
+					ids += ','+obj[i].value;
+				}
+			}
+			if(ids == ''){
+				showTipBox('提示',"请选择短信接收记录");
+				setTimeout(closeTipBox,3000);
+			}else{
+				if(confirm("您确定要批量删除这些接收记录吗?")){
+					$.getJSON("/smsReceiveHistory/batchDelete?x-http-method-override=DELETE",{ids:ids},function(data){
+						if(data){
+							showTipBox('提示',"接收记录批量删除成功");
+						}else{
+							showTipBox('提示',"接收记录批量删除失败");
+						}
+					});
+					setTimeout(query,1100);
+				}					
+			}
+		}
+	</script>

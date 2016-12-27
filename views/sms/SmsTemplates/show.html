@@ -1,0 +1,65 @@
+#{extends 'main.html'/}
+%{
+	_SMS_TEMPLATE_STATUS=models.utils.SecurityConstant.DIC_SMS_TEMPLATE_STATUS;
+	_ALL_USER_NAME = models.utils.SecurityConstant.DIC_ALL_USER_NAME;
+}%
+			<div class="up_sction">
+				<h3 class="h3" >
+					<em>短信模板查看页面</em>
+					<span class="bannerBtn_list">
+						#{f.button '返回',href:@sms.SmsTemplates.index(),class:'query'/}
+					</span>
+				</h3>
+				<div class="formTab_bj">
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">模板名称：</td>
+								<td class="td_25">${template?.name}</td>
+								<!-- <td class="text_r td_8">电话按键：</td>
+								<td class="td_25">${template?.templateCode}</td> -->
+								<td class="text_r td_8">审核状态：</td>
+								<td class="td_25">#{f.dicValue _SMS_TEMPLATE_STATUS, key:template?.status /}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">创建人：</td>
+								<td class="td_25">#{f.dicValue _ALL_USER_NAME,key:template?.creatorId+'' /}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25">
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">创建时间：</td>
+								<td class="td_25">${template?.createdAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td class="text_r td_8">最近操作人：</td>
+								<td class="td_25">#{f.dicValue _ALL_USER_NAME,key:template?.operatorId+'' /}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">最近操作时间：</td>
+								<td class="td_25">${template?.updatedAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td class="text_r td_8">提交审核时间：</td>
+								<td class="td_25">${template?.submittedAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								
+							</tr>
+							<tr>
+								<td class="text_r td_8">审核时间：</td>
+								<td class="td_25">${template?.auditedAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+								<td class="text_r td_8">审核人：</td>
+								<td class="td_25">#{f.dicValue _ALL_USER_NAME,key:template?.auditor+'' /}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">审核备注：</td>
+								<td class="td_25">${template?.auditReason}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">内容：</td>
+								<td class="td_25">${template?.content}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>

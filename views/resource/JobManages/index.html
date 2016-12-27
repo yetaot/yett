@@ -1,0 +1,120 @@
+#{extends 'main.html'/}
+%{
+	_IFUSE=models.utils.SecurityConstant.DIC_USER_STATUS_NAME;
+	_DIC_ROLE_TYPE_NAME=models.utils.SecurityConstant.DIC_ROLE_TYPE_NAME;
+}%
+<div class="up_sction">
+	<h3 class="h3 clear">
+		<em>任务查询</em>
+		<span class="bannerBtn_list">
+			#{f.button '查询',href:'javascript:query();' ,class:'query autonomy_btn'/}
+			#{f.button '新增',href:@resource.JobManages.add(),class:'add' /}
+			#{f.button '删除',href:'javascript:del();',class:'add' /}
+		</span>
+	</h3>
+	<div class="formTab_bj listPage_bj">
+	#{form @resource.JobManages.index(),method:'GET',id:'form'}
+		<table class="form_tab">
+			<tbody>
+				<tr>
+					<td class="text_r td_8">任务名称：</td>
+					<td class="td_25">#{q.text_field 'query.jobName' /}</td>
+					<td class="text_r td_8">状态：</td>
+					<td class="td_25">#{q.select 'query.ifUse',dicName:_IFUSE,value:params['query.ifUse'],blank:'true',blankTitle:'全部'/}</td>
+					<td class="text_r td_8">角色类型：</td>
+					<td class="td_25">#{q.select 'query.roleType',dicName:_DIC_ROLE_TYPE_NAME,value:params['query.roleType'],blank:'true',blankTitle:'全部'/}</td>
+				</tr>
+			</tbody>
+		</table>
+	#{/form}
+	</div>
+</div>
+<div class="down_sction">
+	<h3 class="h3">任务列表</h3>
+	<div class="showTab_bj">
+		<table class="show_tab">
+			<thead>
+				<tr class="tr_bg">
+					<th width="5%"><input type="checkbox" name="checkAll" id="checkAll" /></th>
+					<th width="10%">任务名称</th>
+					<th width="10%">状态</th>
+					<th width="10%">角色类型</th>
+					<th width="15%">创建时间</th>
+					<th width="15%">更新时间</th>
+					<th width="20%">用途</th>
+					<th width="14%">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+			#{list items:rs.results,as:"job"}
+				<tr class=${job_parity=="odd"?"":"bg1"}>
+					<td><input type="checkbox" name="cb" value="${job?.id}" /></td>
+					<td>${job?.jobName}</td>
+					<td>#{f.dicValue _IFUSE,key:job?.ifUse+"" /}</td>
+					<td>#{f.dicValue _DIC_ROLE_TYPE_NAME,key:job?.roleType /}</td>
+					<td>${job.createdAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+					<td>${job.updatedAt?.format('yyyy-MM-dd HH:mm:ss')}</td>
+					<td>${job?.desc}</td>
+					<td>
+						 #{f.link_to '查看',href:@resource.JobManages.show(job?.id),class:'query_btn'/}
+						#{f.link_to '修改',href:@resource.JobManages.edit(job?.id),class:'edit_btn'/}
+						#{if job?.ifUse == 1}
+							#{f.link_to '禁用',href:@resource.JobManages.stop(job?.id),class:'configure_btn' /}
+						#{/if}
+						#{else}
+							#{f.link_to '启用',href:@resource.JobManages.start(job?.id),class:'configure_btn' /}
+						#{/else}
+					</td>
+				</tr>
+				#{/list}
+				#{else}<tr><td colspan="8">暂时没有数据！</td></tr>#{/else}
+			</tbody>
+		</table>
+		<div class="mrb">#{if rs?.pager}#{f.pagination pager:rs?.pager,url:'/jobManages' /}#{/if}</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#checkAll").click(function(){
+		var obj = $("input[name='cb']");
+		if(this.checked == true){
+			$.each(obj,function(i,n){
+				n.checked = true;
+			})
+		}else{
+			$.each(obj,function(i,n){
+				n.checked = false;
+			})
+		}
+	})
+});
+function del(){
+	var obj = $("input[name='cb']:checked");
+	var ids = "";
+	$.each(obj,function(i,n){
+		if(ids == ''){
+			ids += n.value;
+		}else{
+			ids += ','+n.value;
+		}
+	});
+	if(ids != ''){
+		if(confirm("您确定要删除吗?")){
+			$.getJSON("/jobManage/del?x-http-method-override=DELETE",{ids:ids},function(data){
+				if(data){
+					showTipBox('提示',"任务删除成功");
+				}else{
+					showTipBox('提示',"任务删除失败");
+				}
+			})
+			setTimeout(query,1100);
+		}
+	}else{
+		showTipBox('提示',"请选择任务");
+		setTimeout(closeTipBox,3000);
+	}
+}
+function query(){
+	$('#form').submit();
+}
+</script>

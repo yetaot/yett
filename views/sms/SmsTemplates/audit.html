@@ -1,0 +1,74 @@
+#{extends 'main.html'/}
+%{
+	_AUDIT_RESULT=models.utils.SecurityConstant.AUDIT_RESULT;
+}%
+			<div class="up_sction">
+				<h3 class="h3" >
+					<em>短信模板审核页面</em>
+					<span class="bannerBtn_list">
+						#{f.button '返回',href:@sms.SmsTemplates.auditQuery(),class:'query'/}
+					</span>
+				</h3>
+				<div class="formTab_bj">
+				<form name="editForm" id="editForm" method="post" action="@{sms.SmsTemplates.auditAction(template?.id)}?x-http-method-override=PUT">
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">模板名称：</td>
+								<td class="td_25">${template?.name}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+							<!-- <tr>
+								<td class="text_r td_8">变量标签：</td>
+								<td class="td_25">
+								#{list items:columns,as:'column'}
+									#{if column_index == 1}
+									${column}
+									#{/if}
+									#{else}
+									,${column}
+									#{/else}
+								#{/list}
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr> -->
+							<tr>
+								<td class="text_r td_8">内容：</td>
+								<td class="td_25">${template?.content}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">审核结果：</td>
+								<td class="td_40">
+									#{f.select 'result',dicName:_AUDIT_RESULT,required:'true',value:result /}
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">审核备注：</td>
+								<td class="td_40">
+									#{f.text_area 'auditReason',value:params['auditReason']/}
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+						</tbody>
+					</table>
+					<div >
+						<span class="autonomy" style="width: 260px;">
+							#{f.button '保存',href:'javascript:submitForm();',class:'save' /}
+							#{f.button '取消',href:@sms.SmsTemplates.auditQuery(),class:'cancel' /}
+						</span>
+					</div>
+					</form>
+				</div>
+			</div>
+			<script type="text/javascript">
+			function submitForm(){
+				$('#editForm').submit();
+			}
+			</script>

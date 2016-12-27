@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=9;IE=8;IE=7;IE=EDGE" />
+	<title>北京地铁举报投诉平台</title>
+	<link rel="stylesheet" href="/public/stylesheets/index.css">	
+</head>
+<script src="/public/javascripts/jquery-1.8.2.min.js"></script>
+<script src="/public/javascripts/layout.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.menu2 li a').click(function(){
+			$('#mainFrame').attr("src",$(this).attr("data-url"));
+		});
+		$('.menu > li').click(function(){
+			var _list = $(this).find('.menu2');
+			$('.hover').removeClass("hover");
+			$(this).addClass("hover");
+			if(_list.is(":visible")){
+				_list.hide();
+			}else{
+				$('.menu2').hide();
+				_list.show();
+			}
+
+		});
+		
+		$('.menu2').mouseleave(function(){
+			$(this).hide();
+		})
+		
+		$('.menu2 li').hover(function(){
+			 var obj = $(this).find('a');
+		 	var _imgName = obj.css("background-image");
+		 	var _activeName = _imgName.replace("menu.png","menu_hover.png");
+			 obj.css("background-image",_activeName);
+		},function(){
+			 var obj = $(this).find('a');
+			 var _imgName = obj.css("background-image");
+			 var _activeName = _imgName.replace("menu_hover.png","menu.png");
+			 obj.css("background-image",_activeName);
+		})
+
+	});
+</script>
+
+<body>
+
+	<div class="header">
+		#{include './menu.html' /}
+		<div class="interaction">
+			<dl class="uerInfor">
+				<dt>
+					<img src="/public/images/head_icon.png" alt="" class="head"/>
+				</dt>
+				<dd class="user_name">${framework.utils.SecurityUtil.getUserKey(framework.utils.SecurityUtil.USER_REALNAME)}</dd>
+			 	<dd></dd>
+			</dl>
+			<a href="@{Application.logout()}" class="safetyExit">安全退出</a>
+		</div>
+#{include 'jplayer.html'/}
+	</div>
+	<div class="container">
+		<!-- <div class="handles">
+			<ul class="stateList">
+				<li>
+					<em>状态：</em>
+					<span>签出</span>
+				</li>
+				<li>
+					<em>时长：</em>
+					<span>00:00:00</span>
+				</li>
+			</ul>
+			<ul class="handelList">
+				<li class="hangup"><a href="#">签出</a></li>
+				<li class="call_out"><a href="#">置忙</a></li>
+				<li class="rest"><a href="#">置闲</a></li>
+				<li class="Tbusy"><a href="#">外呼</a></li>
+				<li class="logout"><a href="#">挂机</a></li>
+			</ul>
+		</div> -->
+	<!-- 	<div class="switching">
+			<ul class="switchList" style="display:block;">
+				<li><em>新建客户</em><a href="#" class="swidch_delet"></a></li>
+				<li class="hover"><em>通话记录</em><a href="#" class="swidch_delet"></a></li>
+			</ul>
+		</div> -->
+	</div>
+	<div class="content_bj">
+	<iframe src="" width="100%" height="100%" frameborder="0" id="mainFrame" >
+	</iframe>
+	</div>
+	
+
+	<div class="footer"></div>
+</body>
+<script type="text/javascript">
+function playMp3(_url){
+	var player = $("#jquery_jplayer_1");
+	var url=_url;
+	player.jPlayer("destroy");//销毁上一个歌曲播放进程
+	$(".player_box").show();
+	player.jPlayer({//开始本次的播放进程
+		ready: function () {
+			$(this).jPlayer("setMedia", {
+				mp3: url
+			}).jPlayer("play");
+		},
+		swfPath: "/public/javascripts/",
+		wmode: "window",
+		supplied: "mp3"
+	});
+} 
+</script>
+
+</html>

@@ -1,0 +1,37 @@
+application.name=report-platform
+#Log level
+application.log=INFO
+application.log.path=/log4j.properties
+application.log.system.out=on
+#应用启动模式  prod dev
+application.mode=dev
+application.secret=CFDDPgecpZQZxoZxsNUUaUcvbgxOusfQV3uUfwRw65YHDTFdXhNiEVXiZWheOxCs
+date.format=yyyy-MM-dd
+#db=postgres://unicss@127.0.0.1/cc_base
+#mysql数据库配置
+db=mysql://root:bjiamcall@127.0.0.1/jbts
+hibernate.ejb.naming_strategy=framework.base.DBNamingStrategy
+attachments.path=data/attachments
+jpa.ddl=none
+http.port=8090
+redis.url=redis://127.0.0.1:6379
+XForwardedSupport=127.0.0.1
+security.resource.modify=true
+security.resource.rootMenuLen=3
+security.resource.config=resources/config.yml
+security.app.em=em
+security.app.platform=platform
+#交委接口配置信息
+prodEndpoint = http://10.212.202.229:8989/bkgd/services/unifiedExternal?wsdl
+devEndpoint = http://10.212.202.221:8989/bkgd/services/unifiedExternal?wsdl
+#短信模块所需配置信息
+sms.serviceURL=http://219.234.95.98:8090/sms
+sms.balanceUrl=/balance.do
+sms.sendDataUrl=/sendData.do
+sms.sendUrl=/send.do
+sms.userid=
+sms.password=
+sms.signature=
+sms.mobileNo.filepath=/apps/sms/platform/
+em.sms.template.audit=/interface/setAuditResult
+em.sms.receiveSms=/interface/receiveSms

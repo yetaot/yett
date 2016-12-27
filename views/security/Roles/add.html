@@ -1,0 +1,128 @@
+#{extends 'main.html' /}
+%{
+_ROLE_TYPE=models.utils.SecurityConstant.DIC_ROLE_TYPE_NAME;
+}%
+<div class="up_sction">
+				<h3 class="h3">新增角色</h3>
+				<div class="formTab_bj clear showTab_bj2">
+					<div class="role_border">
+						#{form @security.Roles.create(),method:'POST',id:'newForm',name:'newForm'}
+						<div class="role_tabBj">
+							<table class="role_tab">
+								<tbody>
+									<tr>
+										<td class="text_r" width="80">名称：</td>
+										<td width="260">
+											#{f.text_field 'role.name',required:'true' /}
+										</td>
+										<td class="text_r" width="80">类型：</td>
+										<td width="260">
+											#{f.select 'role.type',dicName:_ROLE_TYPE,required:'true',value:params['role.type'],id:'roleType'/}
+										</td>
+										<td class="text_r td_8"></td>
+										<td class="td_40">
+											
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						
+						</div>
+						<h4 class="role_tit">菜单选择</h4>
+						<div class="role_tab2_bj role_tab2_bj_notd">
+							<div class="role_tab2_bor">
+								<table class="show_tab">
+									<tbody>
+									#{list items:menus,as:'vo'}
+										<tr class="bg1" data-type="${vo?.key?.rType}">
+											<td class="td_8">
+												<input type="checkbox" name="rootNode" data-code="${vo?.key?.code}" data-type="${vo?.key?.type}" value="${vo?.key?.id}"/>全选
+											</td>
+											<td class="text_l">${vo?.key?.name}</td>
+										</tr>
+										<tr data-type="${vo?.key?.rType}">
+										<td class="text_l" colspan="3" >
+										#{list items:vo?.value,as:'item'}
+											<span class="input_check td_18 mar_8">
+												<input type="checkbox" name="subNode" data-code="${item?.code}" data-type="${item?.type}" value="${item?.id}" ${(','+codes+',').indexOf(','+item?.id+',')>-1 ? 'checked' : ''}/>
+												<em>${item?.name}</em>
+											</span>
+										#{/list}
+										</td>
+										</tr>
+									#{/list}
+									
+									</tbody>
+								</table>
+							</div>
+							</div>
+					<h4 class="role_tit">功能选择</h4>
+						<div class="role_tab2_bj role_tab2_bj_notd">
+							<div class="role_tab2_bor">
+								<table class="show_tab">
+									<tbody>
+									#{list items:actions,as:'vo'}
+										<tr class="bg1" data-type="${vo?.key?.rType}">
+											<td class="td_8">
+												<input type="checkbox" name="rootNode" data-code="${vo?.key?.code}" data-type="${vo?.key?.type}" value="${vo?.key?.id}"/>全选
+											</td>
+											<td class="text_l">${vo?.key?.name}</td>
+										</tr>
+										<tr data-type="${vo?.key?.rType}">
+										<td class="text_l" colspan="3" >
+										#{list items:vo?.value,as:'item'}
+											<span class="input_check td_18 mar_8">
+												<input type="checkbox" name="subNode" data-code="${item?.code}" data-type="${item?.type}" value="${item?.id}" ${(','+codes+',').indexOf(','+item?.id+',')>-1 ? 'checked' : ''}/>
+												<em>${item?.name}</em>
+											</span>
+										#{/list}
+										</td>
+										</tr>
+									#{/list}
+									
+									</tbody>
+								</table>
+							</div>
+							</div>
+				
+							<div >
+								<span class="autonomy">
+								#{f.button '保存',href:'javascript:submitForm();',class:'save' /}
+								#{f.button '取消',href:@security.Roles.index(),class:'cancel'/}
+								
+								</span>
+							</div>
+						</div>
+						#{/form}
+					</div>
+				</div>
+	
+		<script type="text/javascript">
+		  $(document).ready(function(){
+			$('input[name="rootNode"]').click(function(){
+				var _rcode = $(this).attr("data-code");
+				var nodes = $('input[name="subNode"][data-code^="'+_rcode+'"]');
+				if($(this).is(":checked")){
+					nodes.attr("checked",true);
+				}else{
+					nodes.attr("checked",false);
+				}
+			});
+		  
+			$('#roleType').change(function(){
+				var _val = this.value;
+				$('tr[data-type!="'+_val.toUpperCase()+'"]','.show_tab').hide();
+				$('tr[data-type="'+_val.toUpperCase()+'"]','.show_tab').show();
+			}).change();
+				
+			
+		  });
+		  
+		  
+		  
+		  function submitForm(){
+			  var _val = $('#roleType').val();
+			 $('tr[data-type!="'+_val.toUpperCase()+'"]','.show_tab').find("input[type='checkbox']").attr("checked",false);
+			  $('#newForm').submit();
+		  }
+		</script>

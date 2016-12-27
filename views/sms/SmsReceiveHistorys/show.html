@@ -1,0 +1,33 @@
+#{extends 'main.html'/}
+			<div class="up_sction">
+				<h3 class="h3" >
+					<em>短信接收详情</em>
+					<span class="bannerBtn_list">
+						#{f.button '返回',href:@sms.SmsReceiveHistorys.index(),class:'query'/}
+					</span>
+				</h3>
+				<div class="formTab_bj">
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">发送号码：</td>
+								<td class="td_25">${history?.sender}</td>
+								<td class="text_r td_8">接收号码：</td>
+								<td class="td_25">${history?.acceptor}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">创建时间：</td>
+								<td class="td_25">${history?.createdAt?.format('yyyy-MM-dd HH:mm')}</td>
+								<td class="text_r td_8">接收时间：</td>
+								<td class="td_25">${history?.revicedAt}</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">内容：</td>
+								<td class="td_25">${history?.content}</td>
+								<td class="text_r td_8"></td>
+								<td class="td_25"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>

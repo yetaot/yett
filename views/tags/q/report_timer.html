@@ -1,0 +1,111 @@
+%{
+    ( _arg ) &&  ( _name = _arg);
+    if(! _name) {
+        throw new play.exceptions.TagInternalException("name attribute cannot be empty for select tag");
+    }
+
+   
+    serializedAttrs  = play.templates.FastTags.serialize(_attrs,"blank","blankTitle","year","now","beginAt","endAt").raw();
+}%
+<span class="input_select td_10" data-name="year" style="width:60px;"><div>
+<select name="query.beginYear" id="begin_year">
+   #{list items:_year-10.._year,as:'vo'}
+   <option value="${vo}">${vo}</option>
+   #{/list}	  	 
+</select>
+</div></span>
+<span class="input_select td_10" data-name="month" style="width:60px;"><div>
+<select name="query.beginMonth" id="begin_month">
+   #{list items:1..12,as:'vo'}
+   #{if vo<10}
+   <option value="${"0"+vo}">${"0"+vo}</option>
+   #{/if}
+   #{else}
+   <option value="${vo}">${vo}</option>
+   #{/else}
+   #{/list}  	 
+</select>
+</div></span>
+
+至
+<span class="input_select" style="width:60px;" data-name="year"><div>
+<select name="query.endYear" id="end_year">
+   #{list items:_year-10.._year,as:'vo'}
+   <option value="${vo}">${vo}</option>
+   #{/list}	 
+</select>
+</div></span>
+<span class="input_select"  style="width:60px;"data-name="month"><div>
+<select name="query.endMonth" id="end_month">
+   	    #{list items:1..12,as:'vo'}
+   #{if vo<10}
+   <option value="${"0"+vo}">${"0"+vo}</option>
+   #{/if}
+   #{else}
+   <option value="${vo}">${vo}</option>
+   #{/else}
+   #{/list}
+</select>
+</div></span>
+
+<script type="text/javascript">
+
+Array.prototype.contains = function (element) { 
+	for (var i = 0; i < this.length; i++) { 
+		if (this[i] == element) { 
+			return true; 
+		} 
+	} 
+		return false; 
+} 
+
+
+
+	/**判断是否为闰年**/
+	function isLeapYear(year){
+		var result = false;
+		if(year%4==0 && year%100!=0){
+			result = true;
+		}else{
+			if(year%400==0){
+				result = true;
+			}
+		}
+		return result;
+	}
+	
+	/**获取每个月份的天数**/
+	function getDays(year,month){
+		var days =30;
+		var b_month=[1,3,5,7,8,10,12];
+		var m_month=[4,6,9,11];
+		month = parseInt(month);
+		if(b_month.contains(month)){ //31天
+			days=31;
+		}else if(m_month.contains(month)){ //30天 
+			days=30;
+		}else{
+			if(isLeapYear(year)){
+				days= 29;
+			}else{
+				days= 28;
+			}
+		}
+		return days;
+	}
+	
+$(document).ready(function(){
+	var beginAt= "${_beginAt}"||"${_now}";
+	var endAt="${_endAt}"||"${_now}";
+	var default_begin_year = beginAt.substring(0,4);
+	var default_begin_month = beginAt.substring(5,7);
+	var default_end_year = endAt.substring(0,4);
+	var default_end_month = endAt.substring(5,7);
+	
+	$('#begin_year').find('option[value="'+default_begin_year+'"]').attr("selected",true);
+	$('#end_year').find('option[value="'+default_end_year+'"]').attr("selected",true);
+	$('#begin_month').find('option[value="'+default_begin_month+'"]').attr("selected",true);
+	$('#end_month').find('option[value="'+default_end_month+'"]').attr("selected",true);
+
+});	
+</script>

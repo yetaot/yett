@@ -1,0 +1,157 @@
+#{extends 'main.html'/}
+<style type="text/css">
+	#keys {
+		font-size: 20px;
+	}
+	span.input_text , span.input_textarea {
+		margin-left: 20px;
+	}
+	span.input_textarea{
+		height: 120px;
+	}
+	.statusBtn_list {
+		float: left;
+	} 
+	#var_box {
+		border: solid 1px #ccc;
+		margin-left: 20px;
+		height: 80px;
+		width: auto;
+	}
+	.link_label {
+		background: #287151;
+	}
+</style>
+			<div class="up_sction">
+				<h3 class="h3">短信模板修改页面</h3>
+				<div class="formTab_bj">
+				<form name="editForm" id="editForm" method="post" action="@{sms.SmsTemplates.update(template?.id)}?x-http-method-override=PUT">
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">模板名称：</td>
+								<td class="td_40">
+									#{f.text_field 'template.name',required:'true',value:template?.name/}
+								</td>
+                                <td class="text_r td_8"></td>
+								<td class="td_40">
+								</td>
+							</tr>
+							<!-- <tr>
+								<td class="text_r td_8">变量标签：</td>
+								<td class="td_40">
+									<div id="var_box">
+							<span class="statusBtn_list" >
+							#{list items:dicList,as:'dic'}
+							#{if columns?.contains(dic?.key)}
+							<a href="#" class="status_btn status_all" data-name="${dic?.key}">
+							<input  type="hidden" name="columnName"  data-name="${dic?.key}" value="${dic?.key}"  />
+							${dic?.value}
+							<i class="selected_icon"  data-name="${dic?.key}"  style="display: block;"></i>
+							</a>
+							<a href="#" class="link_label status_btn"  data-name="${dic?.key}">插入</a>
+							#{/if}
+							#{else}
+								<a href="#" class="status_btn status_all" data-name="${dic?.key}">
+								<input  type="hidden" name="columnName"  data-name="${dic?.key}"  />
+								${dic?.value}
+								<i class="selected_icon"  data-name="${dic?.key}"></i>
+								</a>
+								<a href="#" class="link_label status_btn"  style="display: none;" data-name="${dic?.key}">插入</a>
+							#{/else}
+						#{/list}
+					</span>
+				</div>
+								</td>
+							   <td class="text_r td_8"></td>
+								<td class="td_40">
+								</td>
+							</tr> -->
+							<tr>
+								<td class="text_r td_8">内容：</td>
+								<td class="td_40">
+									#{f.text_area 'template.content',value:template?.content,id:'content',onKeyUp:'checkLen(this.value);' /}
+									<span id="countWord" style="color: red;"></span>
+								</td>
+								<td class="text_r td_8"></td>
+								<td class="td_40">
+								</td>
+							</tr>
+						
+						</tbody>
+					</table>
+					</form>
+					<div >
+						<span class="autonomy">
+							#{f.button '提交',href:'javascript:submitForm();',class:'save' /}
+							#{f.button '取消',href:@sms.SmsTemplates.index(),class:'cancel'/}
+						</span>
+					</div>
+			</div>
+			</div>
+			<script type="text/javascript">
+			$(function(){
+				$("a.status_all").live("click",function(){
+					var name = $(this).attr('data-name');
+					var i_obj = $("a > i[data-name='"+name+"']");
+					var link_obj = $("a.link_label[data-name='"+name+"']");
+					var input_obj = $("input[data-name='"+name+"']");
+					if(i_obj.css('display') == 'none'){
+						i_obj.css('display','block');
+						link_obj.css('display','block');
+						input_obj.val(name);
+					}else{
+						i_obj.css("display","none");
+						link_obj.css('display','none');
+						input_obj.val('');
+					}
+				});
+				$("a.link_label").live("click",function(){
+					var value = $(this).attr("data-name");
+					var area_obj = $("#content");
+					insert(area_obj[0], "$\{"+value+"\}");
+				});
+			})
+  	  	function submitForm(){
+ 			$('#editForm').submit();
+	  	} 
+			function  getStringLen(Str){   
+				var   i,len,code;
+				if(Str==null || Str == ""){
+					return   0;	
+				}   
+				len   =   Str.length;   
+				for   (i = 0;i < Str.length;i++){     
+					code = Str.charCodeAt(i);   
+					if   (code > 255) {
+						len ++;
+					}   
+				}   
+				return   len;   
+			}
+			//计算当前输入的个数，汉字算两个字符
+			function checkLen(value){
+				var len = getStringLen(value);
+				$("#countWord").text('已输入'+len+'个字符');
+			}
+			function getCursorPosition(ctrl){
+				var cursorPosition = 0;
+				if(ctrl.selectionStart || ctrl.selectionStart == '0'){
+					//非IE浏览器
+					cursorPosition = ctrl.selectionStart;
+				}else if(document.selection){
+					//IE浏览器
+					ctrl.focus();
+					var range = document.selection.createRange();
+					range.moveStart("character", -ctrl.value.length);
+					cursorPosition = range.text.length;
+				}
+				return cursorPosition;
+			}
+			function insert(obj, s){
+				var pos = getCursorPosition(obj);
+				var val = obj.value;
+				obj.value = val.substring(0,pos)+s+val.substring(pos);
+				checkLen(obj.value);
+			}
+</script>

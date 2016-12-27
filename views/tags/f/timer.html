@@ -1,0 +1,10 @@
+%{
+	String result="00:00:00";
+	if(_arg){
+		result = framework.utils.StringUtil.trim(_arg+"","0");
+		long time =result.toLong();
+		result = framework.utils.DateUtil.timeFomart(time);
+	}
+	
+}%
+${result}

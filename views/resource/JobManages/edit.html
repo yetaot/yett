@@ -1,0 +1,47 @@
+%{
+	_IFUSE=models.utils.SecurityConstant.DIC_USER_STATUS_NAME;
+	_DIC_ROLE_TYPE_NAME=models.utils.SecurityConstant.DIC_ROLE_TYPE_NAME;
+}%
+#{extends 'main.html' /}
+			<div class="up_sction">
+				<h3 class="h3">任务编辑页面</h3>
+				<form id="form" method="post" action="@{resource.JobManages.update(job?.id)}?x-http-method-override=PUT">
+				<div class="formTab_bj">
+					<table class="form_tab">
+						<tbody>
+							<tr>
+								<td class="text_r td_8">任务名称：</td>
+								<td class="td_40">
+									#{f.text_field 'job.jobName',required:'true',value:job?.jobName /}
+								</td>
+								<td class="text_r td_8">状态：</td>
+								<td class="td_40">
+									#{f.select 'job.ifUse',dicName:_IFUSE,blank:'true',blankTitle:'请选择',value:params['job.ifUse']?params['job.ifUse']:job?.ifUse /}
+								</td>
+							</tr>
+							<tr>
+								<td class="text_r td_8">角色类型：</td>
+								<td class="td_40">
+									#{f.select 'job.roleType',dicName:_DIC_ROLE_TYPE_NAME,value:params['job.roleType']?params['job.roleType']:job?.roleType,blank:'true',blankTitle:'请选择',required:'true' /}
+								</td>
+								<td class="text_r td_8">用途：</td>
+								<td class="td_40">
+									#{f.text_field 'job.desc',value:job?.desc /}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div >
+						<span class="autonomy">
+							#{f.button '保存',href:'javascript:submitForm();',class:'save' /}
+							#{f.button '取消',href:@resource.JobManages.index(),class:'cancel'/}
+						</span>
+					</div>
+	     </div>
+	     </form>
+	     </div>
+	     <script type="text/javascript">
+		function submitForm(){
+	 		$('#form').submit();
+		 } 
+	</script>
